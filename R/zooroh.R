@@ -390,7 +390,7 @@ run_mixkr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, 
     checkoptim=NULL;checkoptim <<- 1
     tryCatch(optires <- optim(zpar, lik_mixkr, method="L-BFGS-B",
                      control = list(trace=TRUE, REPORT=10000)),
-             error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); checkoptim <<- 0})
+             error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
     if(.GlobalEnv$checkoptim ==0){estem = TRUE; fb =FALSE}
     if(.GlobalEnv$checkoptim == 1){
       zmix <- 1/(1+exp(-optires$par[1:(K-1)]))
@@ -488,11 +488,11 @@ run_kr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit
     }
     tryCatch(optires <- optim(zpar, lik_kr, method="L-BFGS-B", lower = lowpar, upper = uppar,
                               control = list(trace=TRUE, REPORT=10000)),
-             error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); checkoptim <<- 0})
+             error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
     }else{
       tryCatch(optires <- optim(zpar, lik_kr, method="L-BFGS-B",
                                 control = list(trace=TRUE, REPORT=10000)),
-               error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); checkoptim <<- 0})
+               error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
     }
 
     if(.GlobalEnv$checkoptim ==0){estem = TRUE; fb =FALSE}

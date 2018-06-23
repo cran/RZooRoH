@@ -1,19 +1,15 @@
-e008d0d86f1f9daab19b3ad3c5c15992 *DESCRIPTION
+47a084c28f9e49a7799b385ca2101bcc *DESCRIPTION
 7f26145db994b2bf0b55c3f96257b397 *NAMESPACE
 6aef6a860926d722a79bfc968ee37bf8 *R/lib_kr.R
 8e866c26f1b2e6044e2be0eb096067c4 *R/lib_mixkr.R
 ac489ffc83abced3fe4cf480b27b5c84 *R/prob_emission.R
 a6cb197e66b69b923e225ff577a0a3b4 *R/read_zdata.R
 312bdfd96563e313cca27e5b41b0b499 *R/zooplot_segments.R
-9f36e1f5955144f0b98c7827ffa4741c *R/zooroh.R
+dda2b7c052dccb873db515fc22c90bce *R/zooroh.R
 4c29a65568018b51e0f1418c9f116b3b *R/zooroh_model.R
 9c68274f819e3e059521da8923f63265 *R/zplot_individual.R
 7832ddbaba59c987dc2beb4838a32b52 *R/zplot_prophbd.R
 9f7762200aa5d544ad4790f159a2d388 *R/zplot_vertical.R
-7cd8913d49b6a6137e05d272461cc9b9 *build/vignette.rds
-80c4e0d4909b9f610a0dd25fd9c5091b *inst/doc/zooroh-vignette.R
-f80166e7758c4a2a413eca92a9569803 *inst/doc/zooroh-vignette.Rmd
-62d1bcb04da4bfda7390926578c112ac *inst/doc/zooroh-vignette.html
 71eabd71fe1530e4a977459c1aca09c7 *inst/exdata/genoex.txt
 a2d3e27f68fff30a4551f433fcba6e6e *inst/exdata/genosim.txt
 769d7033220f3dd9304ebdba176b9230 *inst/exdata/typ.frq
@@ -31,4 +27,3 @@ a9c56bae51e148db931d2696b9c9a1b3 *src/zooEM.f90
 ec73d16f36d932d085f1e6d8ebc5b1b9 *src/zooFB.f90
 e7a7406db9b3530ab39f6d414ee48f53 *src/zooViterbi.f90
 327facc22a8cd4005d8c650a30163cce *src/zoolik.f90
-f80166e7758c4a2a413eca92a9569803 *vignettes/zooroh-vignette.Rmd
