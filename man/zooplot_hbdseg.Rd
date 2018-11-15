@@ -4,9 +4,9 @@
 \alias{zooplot_hbdseg}
 \title{Plot HBD segments identified with the ZooROH model}
 \usage{
-zooplot_hbdseg(input, chr = NULL, coord = NULL, minlen = 0, cols = NULL,
-  plotids = TRUE, toplot = NULL, randomids = FALSE, nrandom = (rep(10,
-  length(input))), seed = 100)
+zooplot_hbdseg(input, chr = NULL, coord = NULL, minlen = 0,
+  cols = NULL, plotids = TRUE, toplot = NULL, randomids = FALSE,
+  nrandom = (rep(10, length(input))), seed = 100)
 }
 \arguments{
 \item{input}{a named list with one or several zres objects obtained after
@@ -54,6 +54,6 @@ The function plots the HBD segments identified in the region, using
  individual.
 }
 \description{
-Plot HBD segments identified with the ZooROH model for one or several
+Plot HBD segments identified with the ZooRoH model for one or several
 populations.
 }

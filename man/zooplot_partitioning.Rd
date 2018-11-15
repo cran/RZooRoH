@@ -4,9 +4,9 @@
 \alias{zooplot_partitioning}
 \title{Plot the partitioning of the genome in different HBD classes for each individual}
 \usage{
-zooplot_partitioning(input, cols = NULL, plotids = TRUE, toplot = NULL,
-  randomids = FALSE, nrandom = NULL, seed = 100, ylim = c(0, 1),
-  border = TRUE, nonhbd = TRUE, vertical = FALSE)
+zooplot_partitioning(input, cols = NULL, plotids = TRUE,
+  toplot = NULL, randomids = FALSE, nrandom = NULL, seed = 100,
+  ylim = c(0, 1), border = TRUE, nonhbd = TRUE, vertical = FALSE)
 }
 \arguments{
 \item{input}{a named list with one or several zres objects obtained after
@@ -14,8 +14,7 @@ running zoorun. The zres objects are the output of the zoorun function. For
 instance, putting list(name1 = zres1, name2 = zres2). The function will then
 use the names in the plot (in case several zres objects are used).}
 
-\item{cols}{A vector with the colors to be used for each population or zres
-object.}
+\item{cols}{A vector with the colors to be used for each class in the model.}
 
 \item{plotids}{A logical indicating whether the IDs of the individuals are
 plotted on the graph (TRUE by default).}
@@ -40,9 +39,9 @@ same length as the input list.}
 
 \item{ylim}{The limits of the y-axis.}
 
-\item{border}{Whether a border is plotted around each block of the barplot.
-When set to FALSE, it allows to get a less dense plot when many individuals
-are plotted.}
+\item{border}{Whether a border is plotted around each block of the barplot
+or not. When set to FALSE, it allows to get a less dense plot when many
+individuals are plotted.}
 
 \item{nonhbd}{Whether the a border is plotted around the non-hbd contribution.
 When set to FALSE, it allows to get a less dense plot when many individuals
@@ -52,11 +51,12 @@ are plotted.}
 or not.}
 }
 \value{
-The function plots the HBD segments identified in the region, using
- different colors for different zres object. Each line represents a different
- individual.
+Individuals are presented with stacked barplots. Each vertical stack of bars
+represents one individual. Each class is represented with a bar of a different
+color. The height of the bar represents the proportion associated
+with the corresponding class. The total height of the stack is the total
+autozygosity.
 }
 \description{
-Plot HBD segments identified with the ZooROH model for one or several
-populations.
+Plot the partitioning of the genome in different HBD classes for each individual
 }

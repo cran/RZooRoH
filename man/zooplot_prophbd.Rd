@@ -4,7 +4,8 @@
 \alias{zooplot_prophbd}
 \title{Plot proportion of the genome associated with different HBD classes}
 \usage{
-zooplot_prophbd(input, cols = NULL, style = "barplot", cumulative = FALSE)
+zooplot_prophbd(input, cols = NULL, style = "barplot",
+  cumulative = FALSE)
 }
 \arguments{
 \item{input}{a named list with one or several zres objects obtained after

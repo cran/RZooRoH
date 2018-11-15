@@ -4,14 +4,14 @@
 \alias{zoodata}
 \title{Read the genotype data file}
 \usage{
-zoodata(genofile, min_maf = 0, zformat = "gt", supcol = 5, chrcol = 1,
-  poscol = 3, allelefreq = NULL, samplefile = NA)
+zoodata(genofile, min_maf = 0, zformat = "gt", supcol = 5,
+  chrcol = 1, poscol = 3, allelefreq = NULL, samplefile = NA)
 }
 \arguments{
 \item{genofile}{The name of the input data file. Note that the model is
 designed for autosomes. Other chromosomes and additional filtering (e.g.
 call rate, missing, HWE, etc.) should be performed prior to run RZooRoH with
-tools such as plink or bcftools for instance. The model works on an ordered
+tools such as PLINK or bcftools for instance. The model works on an ordered
 map and ignores SNPs with a null position.}
 
 \item{min_maf}{The minimum allele frequency to keep variants in the analysis
@@ -19,7 +19,7 @@ map and ignores SNPs with a null position.}
 allows to exclude monomorphic markers that are not informative and to reduce
 the size of the data and computational costs. There is no marker exclusion
 on call rate. However, we expect that data filtering is done prior to RZooRoH
-with tools such as plink or vcftools.}
+with tools such as PLINK or vcftools.}
 
 \item{zformat}{The code corresponding to the format of the data file ("gt" for
  genotypes, "gp" for genotype probabilities, "gl" for genotype likelihoods in
@@ -34,17 +34,17 @@ with tools such as plink or vcftools.}
  number of copies of the first allele (and 9 for missing). With the "gp" format we
  have three column per individual with the probabilities of genotype 11
  (homozygous for the first allele), genotype 12 and genotype 22 (this
- corresponds to the oxford gen format). Similarly, with the "gl" format, we
+ corresponds to the oxford GEN format). Similarly, with the "gl" format, we
  have three column per individual with the likelihoods for genotypes 11, 12
  and 22 in Phred scores. Finally, with the "ad" format, we expect two columns
- per individuals: the number of reads for allele 1 and the number of reads
+ per individual: the number of reads for allele 1 and the number of reads
  for allele 2. For these three last formats, missing values must be indicated
  by setting all elements to 0. If one of the columns is non-null for one
  individual, the genotype will be considered non-missing. Note that the
  marker alleles specified in columns 4 and 5 are not used.
 
- Conversion of a plink ped file or a VCF file to RZooRoH format can easily be
- performed using plink (version 1.9) or using bcftools.
+ Conversion of a PLINK ped file or a VCF file to RZooRoH format can easily be
+ performed using PLINK (version 1.9) or using bcftools.
 
  For ped files, recode them to oxford gen format with plink --file myinput
  --recode oxford --autosome --out myoutput. The autosome option keeps only
@@ -56,8 +56,8 @@ with tools such as plink or vcftools.}
  chromosome number in the first column. The tag option allows to select which
  field from the vcf file (GT, PL, GL or GP) is used to generate the genotype
  probabilities exported in the oxford gen format. The -t option allows to
- exclude chromosomes (this is example and chromosome names must be adapted if
- necessary). The needed output data is then outfile.gen.
+ exclude chromosomes (this is an example and chromosome names must be adapted
+ if necessary). The needed output data is then outfile.gen.
 
  If some genotype probabilities are missing, with a value of "-nan", you must
  replace them with "0" (triple 0 is considered as missing). This can be done
@@ -66,7 +66,7 @@ with tools such as plink or vcftools.}
  sed -e 's/-nan/0/g' file.gen > newfile.gen}
 
 \item{supcol}{An optional argument that indicates the number of additional
-columns before the individual genotypes (five columns are expected by
+columns before the individuals genotypes (five columns are expected by
 default as described in the zformat argument description). Note that the
 function requires at least two information columns: the chromosome number
 and the marker position.}
@@ -82,12 +82,12 @@ marker position is indicated (third column by default).}
 The option allows to skip this computation or to provide external allele
 frequencies estimated by another method or on another data set.}
 
-\item{samplefile}{A file with names of the samples. It must match with the
-number of genotypes. If none is provided, the position in the genofile is
-used as ID.}
+\item{samplefile}{A file with names of the samples (optional). It must match
+with the number of genotypes. If none is provided, the position in the genofile
+ is used as ID.}
 }
 \value{
-The function return a global object called zooin containing the
+The function return a zooin object called containing the
  following elements: zooin@genos a matrix with the genotypes or genotype
  probabilities, zooin@bp an array with marker positions, zooin@chrbound a
  matrix with the first and last marker number for each chromosome,
@@ -98,8 +98,8 @@ The function return a global object called zooin containing the
  zooin@sample_ids (the names of the samples).
 }
 \description{
-Read a data file and convert it to the RZooRoH format in an object called
-"zooin".
+Read a data file and convert it to the RZooRoH format in a 'zooin' object required
+for further analysis.
 }
 \examples{
 
@@ -108,24 +108,25 @@ Read a data file and convert it to the RZooRoH format in an object called
 myfile1 <- system.file("exdata","genoex.txt",package="RZooRoH")
 myfile2 <- system.file("exdata","genosim.txt",package="RZooRoH")
 
-# Load your data with default format:
+# Load your data with default format into a zooin object named "data1":
 
-zoodata(myfile1)
+data1 <- zoodata(myfile1)
 
-# Load the first data file with default format and filtering out markers with MAF < 0.02:
+# Load the first data file with default format and filtering out markers with MAF < 0.02
+# into a zooin object called "data1frq002":
 
-zoodata(myfile1, min_maf = 0.02)
+data1frq002 <- zoodata(myfile1, min_maf = 0.02)
 
-# Load the first data file with default format, with external allele frequencies (here a
-# random set) and filtering out markers with MAF < 0.01:
+# Load the first data file with default format, with external allele frequencies
+# (here a random set we create) and filtering out markers with MAF < 0.01:
 
 myrandomfreq <- runif(14831)
-zoodata(myfile1, allelefreq = myrandomfreq, min_maf = 0.01)
+data1c <- zoodata(myfile1, allelefreq = myrandomfreq, min_maf = 0.01)
 
 # Load the second data file and indicate your own format (chromosome number in column 1,
 # map position in column 2, 4 columns before genotypes) and filtering out markers with
-# MAF < 0.01:
+# MAF < 0.01. The created zooin object is called "Sim5":
 
-zoodata(myfile2, chrcol = 1, poscol =2, supcol = 4, min_maf = 0.01)
+Sim5 <- zoodata(myfile2, chrcol = 1, poscol =2, supcol = 4, min_maf = 0.01)
 
 }

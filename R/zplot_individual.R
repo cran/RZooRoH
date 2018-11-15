@@ -116,7 +116,7 @@ zooplot_individuals <- function (input,  cumulative=TRUE, toplot=NULL, ncols=2) 
       }
     }else {
       if (j ==1) {
-        warning ("All individuals are plotted; use toplot to select individuals\n")
+        warning ("\nAll individuals are plotted; use toplot to select individuals\n")
       }
     }
 

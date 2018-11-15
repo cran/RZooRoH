@@ -2,7 +2,7 @@
 #'RZooRoH: A package for estimating global and local individual autozygosity.
 #'
 #'Functions to identify Homozygous-by-Descent (HBD) segments associated with
-#'runs of homozygosity (ROH) and to estimate individual autozygosity (or
+#'runs of homozygosity (RoH) and to estimate individual autozygosity (or
 #'inbreeding coefficient). HBD segments and autozygosity are assigned to
 #'multiple HBD classes with a model-based approach relying on a mixture of
 #'exponential distributions. The rate of the exponential distribution is
@@ -17,42 +17,53 @@
 #'@section Data pre-processing:  Note that the model is designed for autosomes.
 #'  Other chromosomes and additional filtering (e.g. call rate, missing, HWE,
 #'  etc.) should be performed prior to run RZooRoH with tools such as plink or
-#'  bcftools for instance. The model works on an ordered map and ignores SNPs
-#'  with a null position.
+#'  bcftools. The model works on an ordered map and ignores SNPs with a null
+#'  position.
 #'
-#'@section RZooRoH functions: The functions included in the package are
-#'  zoodata(), zoomodel(), zoorun(), zooplot_partitioning(), zooplot_hbdseg(),
-#'  zooplot_prophbd() and zooplot_individuals().
+#'@section RZooRoH functions: The main functions included in the package are
+#'  zoodata(), zoomodel() and zoorun(). There are also four function to plot
+#'  the results: zooplot_partitioning(), zooplot_hbdseg(), zooplot_prophbd()
+#'  and zooplot_individuals(). Finally, four accessors functions help to
+#'  extract the results: realized(), cumhbd(), rohbd() and probhbd().
 #'
 #'  You can obtain individual help for each of the functions. By typing for
-#'  instance: help(zoomodel).
+#'  instance: help(zoomodel) or ? zoomodel.
 #'
 #'  To run RZooRoH, you must first load your data with the zoodata() function.
-#'  It will create a zooin object in the .GlobalEnv (only one data set can be
-#'  loaded). Next, you need to define the model you want to run. You can define
+#'  It will create a zooin object required for further analysis. Next, you need
+#'   to define the model you want to run. You can define
 #'  a default model by typing for instance, my.mod <- zoomodel(). Finally, you
 #'  can run the model with the zoorun function. You can choose to estimate
 #'  parameters with different procedures, estimate global and local
 #'  homozygous-by-descent (HBD) probabilities with the Forward-Backward
 #'  procedure or identify HBD segments with the Viterbi algorithm. The results
-#'  are saved in a zres object. The four plot functions zooplot_partitioning(),
-#'  zooplot_hbdseg(), zooplot_prophbd() and zooplot_individuals() use such zres
-#'  object to make different graphics.
+#'  are saved in a zres object.
 #'
-#'  We expect that data cleaning and filtering has been performed in an earlier
-#'  step. RZooRoH does not perform such cleaning.
+#'  The four plot functions zooplot_partitioning(), zooplot_hbdseg(),
+#'  zooplot_prophbd() and zooplot_individuals() use zres objects to make different
+#'  graphics. Similarly, the accessor functions help to extract information
+#'  from the zres objects (see vignette for more details).
+#'
+#'  To get the list of data sets (for examples):
+#'
+#'  data(package="RZooRoH")
+#'
+#'  And to get the description of one data set, type ? name_data (with name_data
+#'  being the name of the data set). For instance:
+#'
+#'  ? genosim
 #'
 #' @examples
 #'
 #' # Start with a small data set with six individuals and external frequencies.
-#' freqfile <- (system.file("exdata","typ.frq",package="RZooRoH"))
+#' freqfile <- (system.file("exdata","typsfrq.txt",package="RZooRoH"))
 #' typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
 #' frq <- read.table(freqfile,header=FALSE)
-#' zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
+#' typdata <- zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
 #' # Define a model with two HBD classes with rates equal to 10 and 100.
 #' Mod3R <- zoomodel(K=3,base_rate=10)
 #' # Run the model on all individuals.
-#' typ.res <- zoorun(Mod3R)
+#' typ.res <- zoorun(Mod3R,typdata)
 #' # Observe some results: likelihood, realized autozygosity in different
 #' # HBD classes and identified HBD segments.
 #' typ.res@modlik
@@ -60,7 +71,7 @@
 #' typ.res@hbdseg
 #' # Define a model with one HBD and one non-HBD class and run it.
 #' Mod1R <- zoomodel(K=2,predefined=FALSE)
-#' typ2.res <- zoorun(Mod1R)
+#' typ2.res <- zoorun(Mod1R,typdata)
 #' # Print the estimated rates and mixing coefficients.
 #' typ2.res@krates
 #' typ2.res@mixc
@@ -68,21 +79,21 @@
 #' # Get the name and location of a second example file.
 #' myfile <- (system.file("exdata","genoex.txt",package="RZooRoH"))
 #' # Load your data with default format:
-#' zoodata(myfile)
+#' example2 <- zoodata(myfile)
 #' # Define the default model:
 #' my.model <- zoomodel()
 #' # Run RZooRoH on your data with the model (parameter estimation with optim). This can
 #' # take a few minutes because it is a large model for 20 individuals:
-#' \donttest{my.res <- zoorun(my.model)}
+#' \donttest{my.res <- zoorun(my.model,example2)}
 #' # To estimate the parameters with the EM-algorithm, run the Forward-Backward
 #' # algorithm to estimate realized autozygosity and the Viterbi algorithm to
 #' # identify HBD segments (a few mintues too, see above).
-#' \donttest{my.res2 <- zoorun(my.model, fb=TRUE, vit=TRUE, opti=FALSE, estem=TRUE)}
+#' \donttest{my.res2 <- zoorun(my.model, example2, fb=TRUE, vit=TRUE, method = "estem")}
 #'# To run the model on a subset of individuals with 1 thread:
-#' \donttest{my.res3 <- zoorun(my.model, ids=c(7,12,16,18), nT = 1)}
+#' \donttest{my.res3 <- zoorun(my.model, example2, ids=c(7,12,16,18), nT = 1)}
 #' # Define a smaller model and run it on two individuals.
 #' my.mod2 <- zoomodel(K=4,base_rate=10)
-#' \donttest{my.res4 <- zoorun(my.mod2, ids=c(9,18))}
+#' \donttest{my.res4 <- zoorun(my.mod2, example2, ids=c(9,18))}
 #'
 #'@import graphics
 #'@import stats
@@ -121,29 +132,30 @@ is.oneres <- function (x)
 #'Run the ZooRoH model
 #'
 #'Apply the defined model on a group of individuals: parameter estimation,
-#'computation of homozygous-by-descent probabilities and decoding
-#'(identification of HBD segments).
+#'computation of realized autozygosity and homozygous-by-descent probabilities,
+#' and identification of HBD segments (decoding).
 #'
-#'@param zoomodel A valid RZooRoH model as defined by the zoomodel function.
-#'  The model indicates whether rates of exponential distributions are estimated
-#'  or predefined, the number of classes, the starting values for mixing
-#'  coefficients and rates, the error probabilities.
+#'@param zoomodel A valid zmodel object as defined by the zoomodel function. The
+#'  model indicates whether rates of exponential distributions are estimated or
+#'  predefined, the number of classes, the starting values for mixing
+#'  coefficients and rates, the error probabilities. See "zoomodel" for more
+#'  details.
+#'
+#'@param zooin A valid zdata object as obtained by the zoodata function. See
+#'"zoodata" for more details.
 #'
 #'@param ids An optional argument indicating the individual (its position in the
 #'  data file) that must be proceeded. It can also be a vector containing the
 #'  list of numbers that must be proceeded. By default, the model runs for all
 #'  individuals.
 #'
-#'@param opti A logical indicating whether parameters are estimated by
-#'  optimization with the L-BFGS-B method from the optim function (optional
-#'  argument - true by default).
-#'
-#'@param estem A logical indicating whether parameters are estimated by the
-#'  EM-algorithm (optional argument - false by default). When the EM algorithm
-#'  is used, the Forward-Backward algorithm is run automatically (no need to
-#'  select the fb option - see below). When both opti and estem are true, then
-#'  the function will use the EM algorithm. We recommend to set minr to 1 when
-#'  using the EM algorithm.
+#'@param method Specifies whether the parameters are estimated by optimization
+#'  with the L-BFGS-B method from the optim function (option method="opti",
+#'  default value) or with the EM-algortihm (option method="estem"). When the EM
+#'  algorithm is used, the Forward-Backward algorithm is run automatically (no
+#'  need to select the fb option - see below). We recommend to set minr to 1
+#'  when using the EM algorithm. If the user don't want to estimate the
+#'  parameters he must set method="no".
 #'
 #'@param fb A logical indicating whether the forward-backward algorithm is run
 #'  (optional argument - true by default). The Forward-Backward algorithm
@@ -156,7 +168,7 @@ is.oneres <- function (x)
 #'
 #'@param vit A logical indicating whether the Viterbi algorithm is run (optional
 #'  argument - true by default). The Viterbi algorithm performs the decoding
-#'  (determining the underlying class at every marker position). Whereas, the
+#'  (determining the underlying class at every marker position). Whereas the
 #'  Forward-Backward algorithms provide HBD probabilities (and how confident a
 #'  region can be declared HBD), the Viterbi algorithm assigns every marker
 #'  position to one of the defined classes (HBD or non-HBD). When informativity
@@ -168,11 +180,11 @@ is.oneres <- function (x)
 #'
 #'@param localhbd A logical indicating whether the HBD probabilities for each
 #'  individual at each marker are returned when using the EM or the
-#'  Forward-Backward algorithm (estem and fb options). This is an optional
+#'  Forward-Backward algorithm (fb option). This is an optional
 #'  argument that is false by default.
 #'
-#'@param nT Indicates the number of threads used when running RZooRoH in parallel
-#'  (optional argument - one thread by default).
+#'@param nT Indicates the number of threads used when running RZooRoH in
+#'  parallel (optional argument - one thread by default).
 #'
 #'@param maxiter Indicates the maximum number of iterations with the EM
 #'  algorithm (optional argument - 1000 by default).
@@ -182,52 +194,71 @@ is.oneres <- function (x)
 #'
 #'@param minr With optim and the reparametrized model (default), this indicates
 #'  the minimum difference between rates of successive classes. With the EM
-#'  algorithm, it indicates the minimum rate for a class. In it is an optional
-#'  argument set to an arbitrarly large value (0). Adding such constraints
-#'  might slow down the speed of convergence with optim and recommend to run first
-#'  optim without these constraints. With the EM algorithm, we recommend to use a
-#'  value of 1.
+#'  algorithm, it indicates the minimum rate for a class. It is an optional
+#'  argument set to 0. Adding such constraints might slow down the speed of
+#'  convergence with optim and we recommend to run first optim without these
+#'  constraints. With the EM algorithm, we recommend to use a value of 1.
 #'
 #'@param maxr With optim and the reparametrized model (default), this indicates
 #'  the maximum difference between rates of successive classes. With the EM
-#'  algorithm, it indicates the maximum rate for a class. In it is an optional
-#'  argument set to an arbitrarly large value (100000000). Adding such constraints
-#'  might slow down the speed of convergence with optim and recommend to run first
-#'  optim without these constraints.
+#'  algorithm, it indicates the maximum rate for a class. It is an optional
+#'  argument set to an arbitrarly large value (100000000). Adding such
+#'  constraints might slow down the speed of convergence with optim and we
+#'  recommend to run first optim without these constraints.
 #'
-#'@return The function return a zoores object with zoores@@nind the number of
-#'  individuals in the analysis, zoores@@ids a vector containing the numbers of
-#'  the analyzed individuals (their position in the data file), zoores@@mixc the
-#'  (estimated) mixing coefficients per class for all individuals,
-#'  zoores@@krates the (estimated) rates for the exponential distributions
-#'  associated with each HBD or non-HBD class for all individuals, zoores@@niter
-#'  the number of iterations for estimating the parameters (per individual),
-#'  zoores@@modlik a vector containing the likelihood of the model for each
-#'  individual, zoores@@modbic a vector containing the value of the BIC for each
-#'  individual, zoores@@realized the estimated realized autozygosity per HBD
-#'  class for each individual (obtained with the Forward-Backward algorithm run
-#'  with the fb or estem options), zoores@@hbdp a list of matrices with the
+#'@return The function return a zoores object with several slots accesses by
+#' the "@" symbol. The three main results are zoores@@realized (the matrix with
+#' partitioning of the genome in different HBD classes for each individual),
+#' zoores@@hbdseg (a data frame with identified HBD segments) and zoores@@hbdp
+#' (a list of matrices with HBD probabilities per SNP and per class).
+#'
+#' Here is a list with all the slots and their description:
+#'
+#' \enumerate{
+#' \item zoores@@nind the number of individuals in the analysis,
+#' \item zoores@@ids a vector containing the numbers of the analyzed individuals
+#' (their position in the data file),
+#' \item zoores@@mixc the (estimated) mixing coefficients per class for all
+#' individuals,
+#'  \item zoores@@krates the (estimated) rates for the exponential distributions
+#'  associated with each HBD or non-HBD class for all individuals,
+#'  \item zoores@@niter the number of iterations for estimating the
+#'  parameters (per individual),
+#'  \item zoores@@modlik a vector containing the likelihood of the model for
+#'   each individual,
+#'  \item zoores@@modbic a vector containing the value of the BIC for each
+#'  individual,
+#'  \item zoores@@realized a matrix with estimated realized autozygosity per HBD
+#'  class (columns) for each individual (rows). These values are obtained with
+#'  the Forward-Backward algorithm - fb option),
+#'  \item zoores@@hbdp a list of matrices with the
 #'  local probabilities to belong to an underlying hidden state (computed for
-#'  every class and every individual), zoores@@hbdseg a data frame with the list
+#'  every class and every individual). Each matrix has one row per snp and
+#'  one column per class. To access the matrix from individual i, use the
+#'  brackets "[[]]", for instance zoores@@hbdp[[i]],
+#'  \item zoores@@hbdseg a data frame with the list
 #'  of identified HBD segments with the Viterbi algorithm (the columns are the
 #'  individual number, the chromosome number, the first and last SNP of the
 #'  segment, the positions of the first and last SNP of the segment, the number
 #'  of SNPs in the segment, the length of the segment, the HBD state of the
-#'  segment) and zoores@@optimerr a vector indicating whether optim run with or
-#'  without error (0/1). zoores@@sampleids is a vector with the names of the
-#'  samples (when provided in the zooin object through the zoodata function).
+#'  segment),
+#'  \item zoores@@optimerr a vector indicating whether optim ran with or
+#'  without error (0/1),
+#'  \item zoores@@sampleids is a vector with the names of the
+#'  samples (when provided in the zooin object through the zoodata function).}
+#'
 #'
 #'@examples
 #'
 #' # Start with a small data set with six individuals and external frequencies.
-#' freqfile <- (system.file("exdata","typ.frq",package="RZooRoH"))
+#' freqfile <- (system.file("exdata","typsfrq.txt",package="RZooRoH"))
 #' typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
 #' frq <- read.table(freqfile,header=FALSE)
-#' zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
+#' typ <- zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
 #' # Define a model with two HBD classes with rates equal to 10 and 100.
 #' Mod3R <- zoomodel(K=3,base_rate=10)
 #' # Run the model on all individuals.
-#' typ.res <- zoorun(Mod3R)
+#' typ.res <- zoorun(Mod3R, typ)
 #' # Observe some results: likelihood, realized autozygosity in different
 #' # HBD classes and identified HBD segments.
 #' typ.res@modlik
@@ -235,30 +266,30 @@ is.oneres <- function (x)
 #' typ.res@hbdseg
 #' # Define a model with one HBD and one non-HBD class and run it.
 #' Mod1R <- zoomodel(K=2,predefined=FALSE)
-#' typ2.res <- zoorun(Mod1R)
+#' typ2.res <- zoorun(Mod1R, typ)
 #' # Print the estimated rates and mixing coefficients.
 #' typ2.res@krates
 #' typ2.res@mixc
 
 #' # Get the name and location of a second example file and load the data:
 #' myfile <- (system.file("exdata","genoex.txt",package="RZooRoH"))
-#' zoodata(myfile)
+#' ex2 <- zoodata(myfile)
 #' # Run RZooRoH to estimate parameters on your data with the 1 HBD and 1 non-HBD
 #' # class (parameter estimation with optim).
 #' my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
-#' \donttest{my.res <- zoorun(my.mod1R, fb = FALSE, vit = FALSE)}
+#' \donttest{my.res <- zoorun(my.mod1R, ex2, fb = FALSE, vit = FALSE)}
 #' # The estimated rates and mixing coefficients:
 #' \donttest{my.res@mixc}
 #' \donttest{my.res@krates}
 #' # Run the same model and run the Forward-Backward alogrithm to estimate
 #' # realized autozygosity and the Viterbi algorithm to identify HBD segments:
-#' \donttest{my.res2 <- zoorun(my.mod1R)}
-#' # The table with estimated realized inbreeding:
+#' \donttest{my.res2 <- zoorun(my.mod1R, ex2)}
+#' # The table with estimated realized autozygosity:
 #' \donttest{my.res2@realized}
 #' # Run a model with 4 classes (3 HBD classes) and estimate the rates of HBD
 #' # classes with one thread:
 #' my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256))
-#' \donttest{my.res3 <- zoorun(my.mod4R, fb = FALSE, vit = FALSE, nT =1)}
+#' \donttest{my.res3 <- zoorun(my.mod4R, ex2, fb = FALSE, vit = FALSE, nT =1)}
 #' # The estimated rates for the 4 classes and the 20 individuals:
 #' \donttest{my.res3@krates}
 #' # Run a model with 5 classes (4 HBD classes) and predefined rates.
@@ -267,7 +298,7 @@ is.oneres <- function (x)
 #' # alogrithm is ued to estimate realized autozygosity and the Viterbi algorithm to
 #' # identify HBD segments. One thread is used.
 #' mix5R <- zoomodel(K=5,base=10)
-#' \donttest{my.res4 <- zoorun(mix5R,ids=c(7,12,16,18), estem = TRUE, opti =FALSE, nT = 1)}
+#' \donttest{my.res4 <- zoorun(mix5R,ex2,ids=c(7,12,16,18), method = "estem", nT = 1)}
 #' # The table with all identified HBD segments:
 #' \donttest{my.res4@hbdseg}
 #'
@@ -279,12 +310,13 @@ is.oneres <- function (x)
 #'@import doParallel
 #'@import methods
 
-zoorun <- function(zoomodel, ids = NULL, opti = TRUE,
-                   estem = FALSE, fb = TRUE, vit = TRUE, minr = 0, maxr = 100000000,
+zoorun <- function(zoomodel, zooin, ids = NULL, method = "opti",
+                   fb = TRUE, vit = TRUE, minr = 0, maxr = 100000000,
                    maxiter = 1000, convem = 1e-10, localhbd = FALSE, nT = 1){
 
-  if(is.null(ids)){ids=seq(from=1,to=.GlobalEnv$zooin@nind)}
+  if(is.null(ids)){ids=seq(from=1,to=zooin@nind)}
   if(is.zmodel(zoomodel) == FALSE){print("First element is not a valid model - see help for zoomodel function.")}
+  if(is.zdata(zooin) == FALSE){print("First element is not a valid data set - see help for zoodata function.")}
   zrates <- zoomodel@krates
   zmix <- zoomodel@mix_coef
   gerr <- zoomodel@err
@@ -299,11 +331,13 @@ zoorun <- function(zoomodel, ids = NULL, opti = TRUE,
     print("The model type must be kr or mixkr")
   }
 
-  if(opti & estem){
-    print("Please select only one method to estimate parameters (L-BFGS-B or EM-algorithm)")
-    print("RZooRoH will run the EM - algorithm")
-    print("For the default algorithm (L-BFGS-B), don't set estem = TRUE")
-    opti = FALSE
+  opti=FALSE;estem=FALSE
+  if(method == "opti"){opti=TRUE}
+  if(method == "estem"){estem=TRUE}
+  if(method != "opti" & method != "estem" & method !="no"){
+    print(c("Unrecognized method ::",method))
+    print("Will use optim.")
+    opti = TRUE
   }
 
   if(estem & minr < 1){
@@ -326,26 +360,26 @@ zoorun <- function(zoomodel, ids = NULL, opti = TRUE,
     if(zoomodel@typeModel == "mixkr" || zoomodel@typeModel == "MIXKR"){
       xx <- foreach (i=1:length(ids), .combine=c) %do% {
         id <- ids[i]
-        run_mixkr(id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+        run_mixkr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
     if(zoomodel@typeModel == "kr" || zoomodel@typeModel == "KR"){
       xx <- foreach (i=1:length(ids), .combine=c) %do% {
         id <- ids[i]
-        run_kr(id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+        run_kr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
   }else{
     if(zoomodel@typeModel == "mixkr" || zoomodel@typeModel == "MIXKR"){
       xx <- foreach (i=1:length(ids), .combine=c) %dopar% {
         id <- ids[i]
-        run_mixkr(id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+        run_mixkr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
     if(zoomodel@typeModel == "kr" || zoomodel@typeModel == "KR"){
       xx <- foreach (i=1:length(ids), .combine=c) %dopar% {
         id <- ids[i]
-        run_kr(id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+        run_kr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
   }
@@ -368,19 +402,21 @@ zoorun <- function(zoomodel, ids = NULL, opti = TRUE,
     if(localhbd){zoores@hbdp <- lapply(xx,slot,"hbdp")}
   }
   if(vit){zoores@hbdseg <- do.call("rbind", lapply(xx,slot,"hbdseg"))}
-  zoores@sampleids <- .GlobalEnv$zooin@sample_ids[zoores@ids]
+#  zoores@sampleids <- .GlobalEnv$zooin@sample_ids[zoores@ids]
+  zoores@sampleids <- zooin@sample_ids[zoores@ids]
   return(zoores)
 }
 
 #### run mixkr model
 
-run_mixkr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit = FALSE,
+run_mixkr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit = FALSE,
                       gerr = 0.001, seqerr = 0.001, minr = 0, maxr = 100000000,
                       maxiter = 1000, convem = 1e-10, localhbd = FALSE){
   K <- length(zmix)
-  zrs=NULL;pem=NULL
-  zrs <<- zrates
-  pem <<- pemission(id, gerr, seqerr, zformat = .GlobalEnv$zooin@zformat)
+#  zrs=NULL;pem=NULL
+#  zrs <<- zrates
+#  pem <<- pemission(id, gerr, seqerr, zformat = .GlobalEnv$zooin@zformat)
+  pem <- pemission(zooin, id, gerr, seqerr, zformat = zooin@zformat)
 
   if(opti){
     zpar <- array(0,K-1)
@@ -388,7 +424,7 @@ run_mixkr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, 
 
     niter=NULL;niter <<- 0
     checkoptim=NULL;checkoptim <<- 1
-    tryCatch(optires <- optim(zpar, lik_mixkr, method="L-BFGS-B",
+    tryCatch(optires <- optim(zpar, lik_mixkr, zooin = zooin, pem = pem, zrs = zrates, method="L-BFGS-B",
                      control = list(trace=TRUE, REPORT=10000)),
              error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
     if(.GlobalEnv$checkoptim ==0){estem = TRUE; fb =FALSE}
@@ -400,14 +436,15 @@ run_mixkr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, 
   if(estem){
     estimrates <- 0
     onerate <- 0
-    outem <- EM(id, zrates, zmix, estimrates, onerate, maxiter, minr, maxr, convem, localhbd)
+    outem <- EM(zooin,id, pem, zrates, zmix, estimrates, onerate, maxiter, minr, maxr, convem, localhbd)
     print(paste("EM algorithm, iterations and loglik ::",outem[[5]],outem[[3]],sep=" "))
+    zmix <- outem[[2]]
   }
   if(fb){
-    outfb <- fb(id,zrates,zmix,localhbd)
+    outfb <- fb(zooin,id,pem,zrates,zmix,localhbd)
   }
   if(vit){
-    outvit <- viterbi(id,zrates,zmix)
+    outvit <- viterbi(zooin,id,pem,zrates,zmix)
   }
 
   ##### renvoie toujours les paramètres
@@ -418,11 +455,13 @@ run_mixkr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, 
   if(opti){
     if(.GlobalEnv$checkoptim == 1){
     loglik <- -optires$value ### optim miminizes -log(lik)
-    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)}
+#    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)}
+    bicv <- -2 * loglik + log(zooin@nsnps)*(K-1)}
   }
   if(estem){
     loglik <- outem[[3]]
-    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)
+#    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)
+    bicv <- -2 * loglik + log(zooin@nsnps)*(K-1)
     zrates <- outem[[1]]
     zmix <- outem[[2]]
     .GlobalEnv$niter <- outem[[5]]
@@ -454,13 +493,13 @@ run_mixkr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, 
 
 #### run kr model
 
-run_kr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit = FALSE,
+run_kr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit = FALSE,
                    gerr = 0.001, seqerr = 0.001, minr = 1, maxr = 100000000,
                    maxiter = 1000, convem = 1e-10, localhbd = FALSE){
-  pem=NULL
-  pem <<- pemission(id,  gerr, seqerr, zformat = .GlobalEnv$zooin@zformat)
+#  pem=NULL
+#  pem <<- pemission(id,  gerr, seqerr, zformat = .GlobalEnv$zooin@zformat)
+  pem <- pemission(zooin,id,  gerr, seqerr, zformat = zooin@zformat)
   K <- length(zmix) #### vérifier que length(zmix) = length (zrates)
-
   if(opti){
     if(K > 2){
       zpar <- array(0,2*K-1)
@@ -486,11 +525,11 @@ run_kr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit
       lowpar <- c(rep(log(minr),K), rep(-Inf,(K-1)))
       uppar <- c(rep(log(maxr),K), rep(Inf,(K-1)))
     }
-    tryCatch(optires <- optim(zpar, lik_kr, method="L-BFGS-B", lower = lowpar, upper = uppar,
+    tryCatch(optires <- optim(zpar, lik_kr, zooin = zooin, pem = pem, method="L-BFGS-B", lower = lowpar, upper = uppar,
                               control = list(trace=TRUE, REPORT=10000)),
              error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
     }else{
-      tryCatch(optires <- optim(zpar, lik_kr, method="L-BFGS-B",
+      tryCatch(optires <- optim(zpar, lik_kr, zooin = zooin, pem = pem, method="L-BFGS-B",
                                 control = list(trace=TRUE, REPORT=10000)),
                error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
     }
@@ -517,13 +556,17 @@ run_kr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit
     estimrates <- 1
     onerate <- 0
     if (K ==2) onerate <- 1
-    outem <- EM(id, zrates, zmix, estimrates, onerate, maxiter, minr, maxr, convem, localhbd)
+    if(minr < 1){minr=1}
+    outem <- EM(zooin,id, pem, zrates, zmix, estimrates, onerate, maxiter, minr, maxr, convem, localhbd)
+    print(paste("EM algorithm, iterations and loglik ::",outem[[5]],outem[[3]],sep=" "))
+    zrates <- outem[[1]]
+    zmix <- outem[[2]]
   }
     if(fb){
-    outfb <- fb(id,zrates,zmix, localhbd)
+    outfb <- fb(zooin,id,pem,zrates,zmix, localhbd)
   }
   if(vit){
-    outvit <- viterbi(id,zrates,zmix)
+    outvit <- viterbi(zooin,id,pem,zrates,zmix)
   }
 
   ##### renvoie toujours les paramètres
@@ -534,14 +577,19 @@ run_kr <- function(id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit
   if(opti){
     if (.GlobalEnv$checkoptim == 1){
     loglik <- -optires$value ### optim miminizes -log(lik)
-    if(K > 2)bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(2*K-1)
-    if(K == 2)bicv <- -2 * loglik + 2*log(.GlobalEnv$zooin@nsnps)
+#    if(K > 2)bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(2*K-1)
+#    if(K == 2)bicv <- -2 * loglik + 2*log(.GlobalEnv$zooin@nsnps)
+    if(K > 2)bicv <- -2 * loglik + log(zooin@nsnps)*(2*K-1)
+    if(K == 2)bicv <- -2 * loglik + 2*log(zooin@nsnps)
     }}
   if(estem){
     loglik <- outem[[3]]
-    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)
-    if(K > 2)bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(2*K-1)
-    if(K == 2)bicv <- -2 * loglik + 2*log(.GlobalEnv$zooin@nsnps)
+#    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)
+#    if(K > 2)bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(2*K-1)
+#    if(K == 2)bicv <- -2 * loglik + 2*log(.GlobalEnv$zooin@nsnps)
+    bicv <- -2 * loglik + log(zooin@nsnps)*(K-1)
+    if(K > 2)bicv <- -2 * loglik + log(zooin@nsnps)*(2*K-1)
+    if(K == 2)bicv <- -2 * loglik + 2*log(zooin@nsnps)
     zrates <- outem[[1]]
     zmix <- outem[[2]]
     .GlobalEnv$niter <- outem[[5]]

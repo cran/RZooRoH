@@ -4,31 +4,32 @@
 \alias{zoorun}
 \title{Run the ZooRoH model}
 \usage{
-zoorun(zoomodel, ids = NULL, opti = TRUE, estem = FALSE, fb = TRUE,
-  vit = TRUE, minr = 0, maxr = 1e+08, maxiter = 1000, convem = 1e-10,
-  localhbd = FALSE, nT = 1)
+zoorun(zoomodel, zooin, ids = NULL, method = "opti", fb = TRUE,
+  vit = TRUE, minr = 0, maxr = 1e+08, maxiter = 1000,
+  convem = 1e-10, localhbd = FALSE, nT = 1)
 }
 \arguments{
-\item{zoomodel}{A valid RZooRoH model as defined by the zoomodel function.
-The model indicates whether rates of exponential distributions are estimated
-or predefined, the number of classes, the starting values for mixing
-coefficients and rates, the error probabilities.}
+\item{zoomodel}{A valid zmodel object as defined by the zoomodel function. The
+model indicates whether rates of exponential distributions are estimated or
+predefined, the number of classes, the starting values for mixing
+coefficients and rates, the error probabilities. See "zoomodel" for more
+details.}
+
+\item{zooin}{A valid zdata object as obtained by the zoodata function. See
+"zoodata" for more details.}
 
 \item{ids}{An optional argument indicating the individual (its position in the
 data file) that must be proceeded. It can also be a vector containing the
 list of numbers that must be proceeded. By default, the model runs for all
 individuals.}
 
-\item{opti}{A logical indicating whether parameters are estimated by
-optimization with the L-BFGS-B method from the optim function (optional
-argument - true by default).}
-
-\item{estem}{A logical indicating whether parameters are estimated by the
-EM-algorithm (optional argument - false by default). When the EM algorithm
-is used, the Forward-Backward algorithm is run automatically (no need to
-select the fb option - see below). When both opti and estem are true, then
-the function will use the EM algorithm. We recommend to set minr to 1 when
-using the EM algorithm.}
+\item{method}{Specifies whether the parameters are estimated by optimization
+with the L-BFGS-B method from the optim function (option method="opti",
+default value) or with the EM-algortihm (option method="estem"). When the EM
+algorithm is used, the Forward-Backward algorithm is run automatically (no
+need to select the fb option - see below). We recommend to set minr to 1
+when using the EM algorithm. If the user don't want to estimate the
+parameters he must set method="no".}
 
 \item{fb}{A logical indicating whether the forward-backward algorithm is run
 (optional argument - true by default). The Forward-Backward algorithm
@@ -41,7 +42,7 @@ outputs).}
 
 \item{vit}{A logical indicating whether the Viterbi algorithm is run (optional
 argument - true by default). The Viterbi algorithm performs the decoding
-(determining the underlying class at every marker position). Whereas, the
+(determining the underlying class at every marker position). Whereas the
 Forward-Backward algorithms provide HBD probabilities (and how confident a
 region can be declared HBD), the Viterbi algorithm assigns every marker
 position to one of the defined classes (HBD or non-HBD). When informativity
@@ -53,18 +54,17 @@ that better reflects uncertainty.}
 
 \item{minr}{With optim and the reparametrized model (default), this indicates
 the minimum difference between rates of successive classes. With the EM
-algorithm, it indicates the minimum rate for a class. In it is an optional
-argument set to an arbitrarly large value (0). Adding such constraints
-might slow down the speed of convergence with optim and recommend to run first
-optim without these constraints. With the EM algorithm, we recommend to use a
-value of 1.}
+algorithm, it indicates the minimum rate for a class. It is an optional
+argument set to 0. Adding such constraints might slow down the speed of
+convergence with optim and we recommend to run first optim without these
+constraints. With the EM algorithm, we recommend to use a value of 1.}
 
 \item{maxr}{With optim and the reparametrized model (default), this indicates
 the maximum difference between rates of successive classes. With the EM
-algorithm, it indicates the maximum rate for a class. In it is an optional
-argument set to an arbitrarly large value (100000000). Adding such constraints
-might slow down the speed of convergence with optim and recommend to run first
-optim without these constraints.}
+algorithm, it indicates the maximum rate for a class. It is an optional
+argument set to an arbitrarly large value (100000000). Adding such
+constraints might slow down the speed of convergence with optim and we
+recommend to run first optim without these constraints.}
 
 \item{maxiter}{Indicates the maximum number of iterations with the EM
 algorithm (optional argument - 1000 by default).}
@@ -74,51 +74,70 @@ algorithm (optional argument - 1000 by default).}
 
 \item{localhbd}{A logical indicating whether the HBD probabilities for each
 individual at each marker are returned when using the EM or the
-Forward-Backward algorithm (estem and fb options). This is an optional
+Forward-Backward algorithm (fb option). This is an optional
 argument that is false by default.}
 
-\item{nT}{Indicates the number of threads used when running RZooRoH in parallel
-(optional argument - one thread by default).}
+\item{nT}{Indicates the number of threads used when running RZooRoH in
+parallel (optional argument - one thread by default).}
 }
 \value{
-The function return a zoores object with zoores@nind the number of
- individuals in the analysis, zoores@ids a vector containing the numbers of
- the analyzed individuals (their position in the data file), zoores@mixc the
- (estimated) mixing coefficients per class for all individuals,
- zoores@krates the (estimated) rates for the exponential distributions
- associated with each HBD or non-HBD class for all individuals, zoores@niter
- the number of iterations for estimating the parameters (per individual),
- zoores@modlik a vector containing the likelihood of the model for each
- individual, zoores@modbic a vector containing the value of the BIC for each
- individual, zoores@realized the estimated realized autozygosity per HBD
- class for each individual (obtained with the Forward-Backward algorithm run
- with the fb or estem options), zoores@hbdp a list of matrices with the
+The function return a zoores object with several slots accesses by
+the "@" symbol. The three main results are zoores@realized (the matrix with
+partitioning of the genome in different HBD classes for each individual),
+zoores@hbdseg (a data frame with identified HBD segments) and zoores@hbdp
+(a list of matrices with HBD probabilities per SNP and per class).
+
+Here is a list with all the slots and their description:
+
+\enumerate{
+\item zoores@nind the number of individuals in the analysis,
+\item zoores@ids a vector containing the numbers of the analyzed individuals
+(their position in the data file),
+\item zoores@mixc the (estimated) mixing coefficients per class for all
+individuals,
+ \item zoores@krates the (estimated) rates for the exponential distributions
+ associated with each HBD or non-HBD class for all individuals,
+ \item zoores@niter the number of iterations for estimating the
+ parameters (per individual),
+ \item zoores@modlik a vector containing the likelihood of the model for
+  each individual,
+ \item zoores@modbic a vector containing the value of the BIC for each
+ individual,
+ \item zoores@realized a matrix with estimated realized autozygosity per HBD
+ class (columns) for each individual (rows). These values are obtained with
+ the Forward-Backward algorithm - fb option),
+ \item zoores@hbdp a list of matrices with the
  local probabilities to belong to an underlying hidden state (computed for
- every class and every individual), zoores@hbdseg a data frame with the list
+ every class and every individual). Each matrix has one row per snp and
+ one column per class. To access the matrix from individual i, use the
+ brackets "[[]]", for instance zoores@hbdp[[i]],
+ \item zoores@hbdseg a data frame with the list
  of identified HBD segments with the Viterbi algorithm (the columns are the
  individual number, the chromosome number, the first and last SNP of the
  segment, the positions of the first and last SNP of the segment, the number
  of SNPs in the segment, the length of the segment, the HBD state of the
- segment) and zoores@optimerr a vector indicating whether optim run with or
- without error (0/1). zoores@sampleids is a vector with the names of the
- samples (when provided in the zooin object through the zoodata function).
+ segment),
+ \item zoores@optimerr a vector indicating whether optim ran with or
+ without error (0/1),
+ \item zoores@sampleids is a vector with the names of the
+ samples (when provided in the zooin object through the zoodata function).}
 }
 \description{
 Apply the defined model on a group of individuals: parameter estimation,
-computation of homozygous-by-descent probabilities and decoding
-(identification of HBD segments).
+computation of realized autozygosity and homozygous-by-descent probabilities,
+and identification of HBD segments (decoding).
 }
 \examples{
 
 # Start with a small data set with six individuals and external frequencies.
-freqfile <- (system.file("exdata","typ.frq",package="RZooRoH"))
+freqfile <- (system.file("exdata","typsfrq.txt",package="RZooRoH"))
 typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
 frq <- read.table(freqfile,header=FALSE)
-zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
+typ <- zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
 # Define a model with two HBD classes with rates equal to 10 and 100.
 Mod3R <- zoomodel(K=3,base_rate=10)
 # Run the model on all individuals.
-typ.res <- zoorun(Mod3R)
+typ.res <- zoorun(Mod3R, typ)
 # Observe some results: likelihood, realized autozygosity in different
 # HBD classes and identified HBD segments.
 typ.res@modlik
@@ -126,29 +145,29 @@ typ.res@realized
 typ.res@hbdseg
 # Define a model with one HBD and one non-HBD class and run it.
 Mod1R <- zoomodel(K=2,predefined=FALSE)
-typ2.res <- zoorun(Mod1R)
+typ2.res <- zoorun(Mod1R, typ)
 # Print the estimated rates and mixing coefficients.
 typ2.res@krates
 typ2.res@mixc
 # Get the name and location of a second example file and load the data:
 myfile <- (system.file("exdata","genoex.txt",package="RZooRoH"))
-zoodata(myfile)
+ex2 <- zoodata(myfile)
 # Run RZooRoH to estimate parameters on your data with the 1 HBD and 1 non-HBD
 # class (parameter estimation with optim).
 my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
-\donttest{my.res <- zoorun(my.mod1R, fb = FALSE, vit = FALSE)}
+\donttest{my.res <- zoorun(my.mod1R, ex2, fb = FALSE, vit = FALSE)}
 # The estimated rates and mixing coefficients:
 \donttest{my.res@mixc}
 \donttest{my.res@krates}
 # Run the same model and run the Forward-Backward alogrithm to estimate
 # realized autozygosity and the Viterbi algorithm to identify HBD segments:
-\donttest{my.res2 <- zoorun(my.mod1R)}
-# The table with estimated realized inbreeding:
+\donttest{my.res2 <- zoorun(my.mod1R, ex2)}
+# The table with estimated realized autozygosity:
 \donttest{my.res2@realized}
 # Run a model with 4 classes (3 HBD classes) and estimate the rates of HBD
 # classes with one thread:
 my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256))
-\donttest{my.res3 <- zoorun(my.mod4R, fb = FALSE, vit = FALSE, nT =1)}
+\donttest{my.res3 <- zoorun(my.mod4R, ex2, fb = FALSE, vit = FALSE, nT =1)}
 # The estimated rates for the 4 classes and the 20 individuals:
 \donttest{my.res3@krates}
 # Run a model with 5 classes (4 HBD classes) and predefined rates.
@@ -157,7 +176,7 @@ my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256))
 # alogrithm is ued to estimate realized autozygosity and the Viterbi algorithm to
 # identify HBD segments. One thread is used.
 mix5R <- zoomodel(K=5,base=10)
-\donttest{my.res4 <- zoorun(mix5R,ids=c(7,12,16,18), estem = TRUE, opti =FALSE, nT = 1)}
+\donttest{my.res4 <- zoorun(mix5R,ex2,ids=c(7,12,16,18), method = "estem", nT = 1)}
 # The table with all identified HBD segments:
 \donttest{my.res4@hbdseg}
 

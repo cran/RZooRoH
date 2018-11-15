@@ -1,6 +1,6 @@
 #'Plot HBD segments identified with the ZooROH model
 #'
-#'Plot HBD segments identified with the ZooROH model for one or several
+#'Plot HBD segments identified with the ZooRoH model for one or several
 #'populations.
 #'
 #'@param input a named list with one or several zres objects obtained after
@@ -149,7 +149,7 @@ zooplot_hbdseg <- function (input,  chr = NULL,  coord = NULL, minlen = 0, cols 
       allres <- rbind (allres, myres)
     }
   }
-  filres <- allres [allres$lenbp >= minlen & allres[, 6]>=coord[1] & allres [, 5]<= coord[2] ,  ]
+  filres <- allres [allres$length >= minlen & allres[, 6]>=coord[1] & allres [, 5]<= coord[2] ,  ]
   filres [, 5] <-   filres [, 5] /1000000
   filres [, 6] <-   filres [, 6] /1000000
 

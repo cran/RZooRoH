@@ -4,13 +4,13 @@
 \alias{zoomodel}
 \title{Define the model for the RZooRoH}
 \usage{
-zoomodel(predefined = TRUE, K = 10, mix_coef = rep(0, K), base_rate = 2,
-  krates = rep(0, K), err = 0.001, seqerr = 0.001)
+zoomodel(predefined = TRUE, K = 10, mix_coef = rep(0, K),
+  base_rate = 2, krates = rep(0, K), err = 0.001, seqerr = 0.001)
 }
 \arguments{
 \item{predefined}{Logical (TRUE or FALSE) to define whether rates of HBD and
 non-HBD-classes will be estimated by the model ("kr" model) or whether the
-rates of these classes are fixed and predefined by the user ("mixkr" model).
+rates of these classes are fixed and pre-defined by the user ("mixkr" model).
 The default value is "predefined = TRUE".}
 
 \item{K}{The number of HBD and non-HBD classes. There are always K-1 HBD
@@ -53,11 +53,12 @@ function expects K positive rates. These rates are parameters of the
 exponential distribution that together with the distance in centimorgans
 defines the probability to end a HBD segments between two markers. Each HBD
 class has a distinct rate. Therefore, the expected length of HBD classes is
-defined by the rates. These krates are associated with the age of the common
-ancestor of the HBD segment. The rate is approximately equal to the size of
-the inbreeding loop (twice the number of generations to the common ancestor)
-when the map is given in Morgans. By default, the rates are defined by the
-base_rate parameter (2, 4, 8, 16, ...).}
+defined by the rates. The expected length if equal to 1/R. These krates are
+ associated with the age of the common ancestor of the HBD segment. The rate
+is approximately equal to the size of the inbreeding loop (twice the number
+of generations to the common ancestor) when the map is given in Morgans.
+By default, the rates are defined by the base_rate parameter
+(2, 4, 8, 16, ...).}
 
 \item{err}{Indicates the error term, the probability to observe an
 heterozygous genotype in a HBD segment. The genotype could be heterozygous
@@ -66,11 +67,11 @@ be associated with a genotype calling error or a technical error. In case GP
 or GL formats are used (with genotyped probabilities or phred scores) or
 when an AD format is used (based on read counts), this error term still
 represents the probability to observe an heterozygous genotype in a HBD
-segment. When an heterozygous genotyped was called with a probability equal
+segment. When an heterozygous genotype was called with a probability equal
 to 1.00, this heterozygosity in an HBD track might be associated to a
 mutation or to errors not accounted for by the model used to estimate the
 genotype probabilities (e.g., GATK). The emission probability to observe a
-heterozygous SNP in an HBD class with never go below the error term. The
+heterozygous genotype in an HBD class will never go below the error term. The
 default value is 0.001.}
 
 \item{seqerr}{This parameters is used only with the AD format. In the AD

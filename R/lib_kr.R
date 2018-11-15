@@ -2,7 +2,7 @@
 
 ### Estimate the likelihood for a set of parameters
 
-lik_kr <- function(zpar) {
+lik_kr <- function(zpar,zooin,pem) {
 
   if(length(zpar) == 2){
     K <- 2 #### 1R model with two parameters
@@ -33,9 +33,9 @@ lik_kr <- function(zpar) {
   }
   #  niter <<- niter + 1
   .GlobalEnv$niter <- .GlobalEnv$niter + 1
-  oneiter <- .Fortran("zoolik",as.integer(K), as.integer(.GlobalEnv$zooin@nchr),as.integer(.GlobalEnv$zooin@nsnps),
-                      as.double(.GlobalEnv$pem), as.integer(.GlobalEnv$zooin@chrbound),as.double(zrs),as.double(fs),
-                      as.integer(.GlobalEnv$zooin@bp),as.double(0))
+  oneiter <- .Fortran("zoolik",as.integer(K), as.integer(zooin@nchr),as.integer(zooin@nsnps),
+                      as.double(pem), as.integer(zooin@chrbound),as.double(zrs),as.double(fs),
+                      as.integer(zooin@bp),as.double(0))
   loglik <- oneiter[9][[1]][1]
   return(-loglik)
 }

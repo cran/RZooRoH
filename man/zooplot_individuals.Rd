@@ -5,7 +5,8 @@
 \title{Plot individual curves with proportion of the genome in each HBD class or cumulated
 proportion in HBD classes with rates smaller than a threshold.}
 \usage{
-zooplot_individuals(input, cumulative = TRUE, toplot = NULL, ncols = 2)
+zooplot_individuals(input, cumulative = TRUE, toplot = NULL,
+  ncols = 2)
 }
 \arguments{
 \item{input}{a named list with one or several zres objects obtained after
