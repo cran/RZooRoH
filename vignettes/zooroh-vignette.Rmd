@@ -2,22 +2,16 @@
 title: "The RZooRoH package"
 author: "Tom Druet, Amandine Bertrand, Naveen Kadri & Mathieu Gautier"
 date: "`r Sys.Date()`"
-##  rmarkdown::html_vignette:
 output:
-#  html_document:
-#    toc: yes
   rmarkdown::pdf_document:
     fig_caption: yes
-#    toc: yes
     citation_package : natbib
 bibliography: rzoo.bib
 biblio-style: apalike
-#csl: biomed-central.csl
-#csl: genetics.csl
 vignette: >
-  %\VignetteIndexEntry{RZooRoH Vignette}
+  %\VignetteIndexEntry{The RZooRoH package}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include = FALSE}

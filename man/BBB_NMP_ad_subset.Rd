@@ -6,25 +6,23 @@
 \title{Example for "ad" format specification}
 \format{A data frame with 1,000 rows and 25 variables:
 \describe{
-\item{chr}{The chromosome number}
-\item{marker_name}{The marker id}
-\item{pos}{The position of the marker}
-\item{allele1}{The name of the first marker allele}
-\item{allele2}{The name of the second marker allele}
-\item{id1_ad1}{The read count for the first individual at the first markrer}
-\item{id1_ad2}{The read count for the first individual at the second markrer}
-\item{id2_ad1}{The read count for the second individual at the first markrer}
-\item{id2_ad2}{The read count for the second individual at the second markrer}
-\item{id3_ad1, id3_ad2, id4_ad1, id4_ad2, id5_ad1, id5_ad2, id6_ad1, id6_ad2, id7_ad1, id7_ad2, id8_ad1, id8_ad2, id9_ad1, id9_ad2, id10_ad1, id10_ad2}{The
-read counts for the other individuals}
-}}
+  \item{chr}{The chromosome number}
+  \item{marker_name}{The marker id}
+  \item{pos}{The position of the marker}
+  \item{allele1}{The name of the first marker allele}
+  \item{allele2}{The name of the second marker allele}
+  \item{id1_ad1}{The read count for the first individual at the first markrer}
+  \item{id1_ad2}{The read count for the first individual at the second markrer}
+  \item{id2_ad1}{The read count for the second individual at the first markrer}
+  \item{id2_ad2}{The read count for the second individual at the second markrer}
+  \item{id3_ad1, id3_ad2, id4_ad1, id4_ad2, id5_ad1, id5_ad2, id6_ad1, id6_ad2, id7_ad1, id7_ad2, id8_ad1, id8_ad2, id9_ad1, id9_ad2, id10_ad1, id10_ad2}{The read counts for the other individuals} }}
 \usage{
 BBB_NMP_ad_subset
 }
 \description{
-A dataset containing real allele depth information for 1,000 SNPs.
-The data is available for ten individuals and the first 1,000 SNPs on chromosome 1.
-The data corresponds to a low-fold sequencing experiment.
-There are two columns per individuals (read counts for allele 1 and for allele 2).
+A dataset containing real allele depth information for 1,000 SNPs. The data
+is available for ten individuals and the first 1,000 SNPs on chromosome 1.
+The data corresponds to a low-fold sequencing experiment. There are two
+columns per individuals (read counts for allele 1 and for allele 2).
 }
 \keyword{datasets}

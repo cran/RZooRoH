@@ -151,7 +151,7 @@ is.oneres <- function (x)
 #'
 #'@param method Specifies whether the parameters are estimated by optimization
 #'  with the L-BFGS-B method from the optim function (option method="opti",
-#'  default value) or with the EM-algortihm (option method="estem"). When the EM
+#'  default value) or with the EM-algorithm (option method="estem"). When the EM
 #'  algorithm is used, the Forward-Backward algorithm is run automatically (no
 #'  need to select the fb option - see below). We recommend to set minr to 1
 #'  when using the EM algorithm. If the user don't want to estimate the
@@ -202,7 +202,7 @@ is.oneres <- function (x)
 #'@param maxr With optim and the reparametrized model (default), this indicates
 #'  the maximum difference between rates of successive classes. With the EM
 #'  algorithm, it indicates the maximum rate for a class. It is an optional
-#'  argument set to an arbitrarly large value (100000000). Adding such
+#'  argument set to an arbitrarily large value (100000000). Adding such
 #'  constraints might slow down the speed of convergence with optim and we
 #'  recommend to run first optim without these constraints.
 #'

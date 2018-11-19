@@ -4,10 +4,13 @@
 \name{BBB_NMP_pl_subset}
 \alias{BBB_NMP_pl_subset}
 \title{Example for "pl" format specification}
-\format{A data frame with 1,000 rows and 35 variables: \describe{
-  \item{chr}{The chromosome number} \item{marker_name}{The marker id}
-  \item{pos}{The position of the marker} \item{allele1}{The name of the first
-  marker allele} \item{allele2}{The name of the second marker allele}
+\format{A data frame with 1,000 rows and 35 variables:
+\describe{
+  \item{chr}{The chromosome number}
+  \item{marker_name}{The marker id}
+  \item{pos}{The position of the marker}
+  \item{allele1}{The name of the first marker allele}
+  \item{allele2}{The name of the second marker allele}
   \item{id1_pl1}{The AA phred likelihood for the first individual}
   \item{id1_pl2}{The AB phred likelihood for the first individual}
   \item{id1_pl3}{The BB phred likelihood for the first individual}

@@ -6,27 +6,25 @@
 \title{Example for "gp" format specification}
 \format{A data frame with 1,000 rows and 35 variables:
 \describe{
-\item{chr}{The chromosome number}
-\item{marker_name}{The marker id}
-\item{pos}{The position of the marker}
-\item{allele1}{The name of the first marker allele}
-\item{allele2}{The name of the second marker allele}
-\item{id1_gp1}{The AA genotype probability for the first individual}
-\item{id1_gp2}{The AB genotype probability for the first individual}
-\item{id1_gp3}{The BB genotype probability for the first individual}
-\item{id2_gp1}{The AA genotype probability for the second individual}
-\item{id2_gp2}{The AB genotype probability for the second individual}
-\item{id2_gp3}{The BB genotype probability for the second individual}
-\item{id3_gp1, id3_gp2, id3_gp3, id4_gp1, id4_gp2, id4_gp3, id5_gp1, id5_gp2, id5_gp3, id6_gp1, id6_gp2, id6_gp3, id7_gp1, id7_gp2, id7_gp3, id8_gp1, id8_gp2, id8_gp3, id9_gp1, id9_gp2, id9_gp3, id10_gp1, id10_gp2, id10_gp3}{The genotype probabilities for
-the other individuals}
-}}
+  \item{chr}{The chromosome number}
+  \item{marker_name}{The marker id}
+  \item{pos}{The position of the marker}
+  \item{allele1}{The name of the first marker allele}
+  \item{allele2}{The name of the second marker allele}
+  \item{id1_gp1}{The AA genotype probability for the first individual}
+  \item{id1_gp2}{The AB genotype probability for the first individual}
+  \item{id1_gp3}{The BB genotype probability for the first individual}
+  \item{id2_gp1}{The AA genotype probability for the second individual}
+  \item{id2_gp2}{The AB genotype probability for the second individual}
+  \item{id2_gp3}{The BB genotype probability for the second individual}
+  \item{id3_gp1, id3_gp2, id3_gp3, id4_gp1, id4_gp2, id4_gp3, id5_gp1, id5_gp2, id5_gp3, id6_gp1, id6_gp2, id6_gp3, id7_gp1, id7_gp2, id7_gp3, id8_gp1, id8_gp2, id8_gp3, id9_gp1, id9_gp2, id9_gp3, id10_gp1, id10_gp2, id10_gp3}{The genotype probabilities for the other individuals} }}
 \usage{
 BBB_NMP_GP_subset
 }
 \description{
-A dataset containing real genotype probabilities for 1,000 SNPs.
-The data is available for ten individuals and 1,000 SNPs on chromosome 10.
-The data corresponds to a low-fold sequencing experiment.
-There are three columns per individuals (for genotypes 00, 01 and 11).
+A dataset containing real genotype probabilities for 1,000 SNPs. The data is
+available for ten individuals and 1,000 SNPs on chromosome 10. The data
+corresponds to a low-fold sequencing experiment. There are three columns per
+individuals (for genotypes 00, 01 and 11).
 }
 \keyword{datasets}

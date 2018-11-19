@@ -22,7 +22,7 @@ HBD segments (method = "counts") or proportion of the genome (method ="sharing")
 }
 \value{
 A data frame with three columns and one row per 1Mb bins. The first column
-indicates the the length of smallests HBD segments in the bin, the second column
+indicates the the length of smallest HBD segments in the bin, the second column
 indicates the length of the largest HBD segments in the bin and the third column
 indicates the number of segments in the bin or the proportion of the genome
 in the bin.
