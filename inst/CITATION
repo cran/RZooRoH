@@ -1,0 +1,24 @@
+citHeader("To cite package 'RZooRoH' in publications, please use:")
+
+
+citEntry(entry="Article",
+         author = 	 "Druet T. and Gautier M.",
+         title = 	 "A model-based approach to characterize individual inbreeding at both global and local genomic scales.",
+         journal = 	 "Molecular Ecology",
+         year = 	 2017,
+         volume =	 26,
+         number =	 20,
+         pages="5820-5841",
+         url       = "https://doi.org/10.1111/mec.14324",
+         textVersion ="T. Druet and M. Gautier (2017). A model-based approach to characterize individual inbreeding at both global and local genomic scales. Molecular Ecology, 26:5820-5841" )
+
+citEntry(entry="Article",
+         author = 	 "Bertrand A.R., Kadri N.K., Flori L., Gautier M., and Druet T.",
+         title = 	 "RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments.",
+         journal = 	 "Methods in Ecology and Evolution",
+         year = 	 2019,
+         url       = "https://doi.org/10.1111/2041-210X.13167",
+         textVersion ="A.R. Bertrand, N.K. Kadri, L. Flori, M. Gautier and T. Druet (2019). RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments. Methods in Ecology and Evolution" )
+
+
+

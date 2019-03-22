@@ -429,7 +429,7 @@ run_mixkr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = F
              error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
     if(.GlobalEnv$checkoptim ==0){estem = TRUE; fb =FALSE}
     if(.GlobalEnv$checkoptim == 1){
-      zmix <- 1/(1+exp(-optires$par[1:(K-1)]))
+      zmix <- exp(optires$par[1:(K-1)])/(1+sum(exp(optires$par[1:(K-1)])))
       zmix[K] <- 1 - sum(zmix[1:(K-1)])
     }
   }
@@ -541,7 +541,7 @@ run_kr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALS
         zrates[1] <- exp(optires$par[1])
         for (j in 2:(K-1)){zrates[j] <- zrates[j-1] + exp(optires$par[j])}
         zrates[K] <- exp(optires$par[K])
-        zmix <- 1/(1+exp(-optires$par[(K+1):(2*K-1)]))
+        zmix <- exp(optires$par[(K+1):(2*K-1)])/(1+sum(exp(optires$par[(K+1):(2*K-1)])))
         zmix[K] <- 1 - sum(zmix[1:(K-1)])
       } else {
         zrates <- exp(optires$par[1])

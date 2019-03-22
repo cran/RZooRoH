@@ -38,10 +38,17 @@ To install the package, open R and run:
 ```{r, eval = FALSE}
 install.packages("RZooRoH")
 ```
+## 2 Citations
 
-## 2 The multiple HBD classes model
+To cite the RZooRoH package in publication, please use:
 
-### 2.1 The hidden Markov model with two classes (HBD _vs_ non-HBD)
+* T. Druet and M. Gautier (2017). A model-based approach to characterize individual inbreeding at both global and local genomic scales. Molecular Ecology, 26:5820-5841 (https://doi.org/10.1111/mec.14324).
+
+* A.R. Bertrand, N.K. Kadri, L. Flori, M. Gautier and T. Druet (2019). RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments. Methods in Ecology and Evolution (https://doi.org/10.1111/2041-210X.13167).
+
+## 3 The multiple HBD classes model
+
+### 3.1 The hidden Markov model with two classes (HBD _vs_ non-HBD)
 The model is an hidden Markov model (**HMM**) describing the genome of an individual as a succession of HBD and non-HBD segments. The unobserved HBD status is evaluated at each marker position. The two HBD status (the position is HBD or is not HBD) are not observed and referred to as hidden states. To compute the probability of a specific succession of HBD and non-HBD segments, the model requires the probability to continue or end the current segment (related to so-called transition probabilities) and the probability to observe the genotypes or the reads (with sequencing data) conditionally on the HBD status (so-called emission probabilities). In the case the current segment stops, we need also to define the probability to start a new HBD or non-HBD segment:
 
 * The length of HBD segments is exponentially distributed [@Tho2013]. We can use this to model the probability to continue or stop a segment. The probability to end a segment between two markers separated by d Morgans is $e^{-Rd}$, where R is the rate of the exponential distribution. The expected length of HBD segments is then 1/R Morgans (high rates corresponding to shorter segments).
@@ -52,7 +59,7 @@ The model is an hidden Markov model (**HMM**) describing the genome of an indivi
 
 More details on one HBD class HMM can be found in Leutenegger [-@leutenegger2003], Vieira et al. [-@vieira2016], Narasimhan et al. [-@narasimhan2016] and Druet and Gautier [-@DG2017].
 
-### 2.2 Extending to multiple HBD classes
+### 3.2 Extending to multiple HBD classes
 Assuming a single HBD class amounts to consider that all HBD segments have the same expected length. This might be interpreted biologically as considering that all the autozygosity traces back to a single ancestor or several ancestors living in the same generation. A multiple HBD classes model assumes instead that each HBD class has its own expected length and frequency allowing to fit more realistic situations where ancestors contributing to autozygosity trace back to different generations in the past. This is the case in most populations (see Druet and Gautier [-@DG2017] or Sole et al. [-@sole2017] for examples).
 
 The multiple HBD classes HMM still describes the genome of an individual as a succession of HBD and non-HBD segments. However, the HBD segments are categorized in different classes (e.g., very long, long, normal, short or very short HBD segments). Each of the classes defines an hidden state. The principle is the same as for the first HMM except that several classes of HBD segments are defined (based on their length). To compute the probability of a specific succession of HBD and non-HBD segments, the model requires the same probabilities as before:
@@ -65,7 +72,7 @@ The multiple HBD classes HMM still describes the genome of an individual as a su
 
 A full description of the model is described in Druet and Gautier [-@DG2017]. 
 
-### 2.3 Identifying HBD segments and estimating HBD probabilities with an HMM 
+### 3.3 Identifying HBD segments and estimating HBD probabilities with an HMM 
 
 We presented above some elements to compute the probability of a single succession of HBD and non-HBD segments but this is not our main interest. Indeed, we want to compute the probability of a possible sequence (of states) in order to find the best sequence or to estimate probabilities by integration over all sequences. The number of possible sequences of states increases rapidly with the number of markers $nsnp$ and is equal to $K^{nsnp}$, where $K$ is the number of states (classes).
 
@@ -73,7 +80,7 @@ Fortunately, in the HMM framework we can efficiently compute the likelihood of t
 
 Alternatively, it is also possible to use the Viterbi algorithm [@rabiner1989] to identify the most likely sequence of states or succession of HBD and non-HBD segments. In that case, every marker position is assigned to one of the _K_ classes and stretches of markers assigned to the same class form HBD segments. We do not longer obtain probabilities.
 
-### 2.4 Model and results interpretation 
+### 3.4 Model and results interpretation 
 
 The different HBD classes are defined by their specific rates $R_k$. The length of HBD segments from class _k_ is exponentially distributed with rate $R_k$ and mean $1/R_k$. Classes with lower rates correspond to longer HBD segments from more recent common ancestors. Therefore, different HBD classes can be interpreted as HBD segments of different groups of ancestors tracing back to different generations in the past. The rate of the class is approximately equal to the size of the inbreeding loop in generations [@DG2017]. So, the rate of the class is approximately equal to twice the number of generations to the common ancestor. For instance, a class with a rate $R_k$ equal to 10 would correspond approximately to ancestors five generations ago whereas a class with a rate $R_k$ equal to 100 would correspond approximately to ancestors fifty generations ago. These are off course no precise estimations of age of HBD segments but rather qualitative measures.
 
@@ -87,9 +94,9 @@ Inbreeding coefficients are estimated with respect to a base population that nee
 
 Finally, when running the Viterbi algorithm, we obtain segments associated with different HBD classes (stretches of markers assigned to the same HBD class). We can define HBD segments as segments associated with any of the HBD classes or restrict the definition to HBD classes with a rate smaller than a threshold (eventually defining the base population).
 
-## 3 Differences with other approaches
+## 4 Differences with other approaches
 
-### 3.1 Some differences with window-based approaches identifying ROH
+### 4.1 Some differences with window-based approaches identifying ROH
 
 Several approaches to identify ROH (later interpreted as HBD segments) are based on gathering information in sliding windows. With rule-based methods [@McQuillan2008], stretches of genotypes fulfilling certain criteria (e.g., number of SNPs, number of heterozygous and missing genotypes, marker density, window length, marker spacing) are interpreted as HBD segments. Ideally, the criteria should be optimized for every data set (population, genotyping technology, etc.). Such an approach is implemented in PLINK [@purcell2007]. In likelihood-based approaches [@BW99;@Pemberton2012], LOD-scores are computed to classify windows as HBD or non-HBD. The marker allele frequencies and genotyping errors are used to compute the likelihood, making the approach less sensitive to marker recruitment bias. The optimal window size is determined by selecting the smallest value resulting in a clear bi-modal distribution of LOD scores. Likelihood-based approaches should be preferred to rule-based approaches since they better account for allele frequencies and genotyping errors.
 
@@ -109,7 +116,7 @@ Finally, HMM present also $\color{blue}{\text{conceptual differences}}$ with ROH
 knitr::include_graphics("Fig4hb_barplot_filteredRR.pdf")
 ```
 
-### 3.2 Benefits of using multiple HBD classes
+### 4.2 Benefits of using multiple HBD classes
 
 The multiple HBD classes model assumes that each HBD class has its own expected length and frequency [@DG2017] allowing to fit realistic situations where ancestors contributing to autozygosity trace back to different generations in the past. These classes are related to the age of common ancestors associated with the HBD classes (see section 2.4): classes with longer segments (lower rates) correspond to more recent common ancestors and vice versa. 
 
@@ -129,13 +136,13 @@ Here are some benefits of using multiple HBD classes:
 knitr::include_graphics("Figure2.pdf")
 ```
 
-## 4 Input data
+## 5 Input data
 
-### 4.1 Data format and conversion from PED or VCF files
+### 5.1 Data format and conversion from PED or VCF files
 
 Several data formats are accepted, including the $\color{blue}{\text{Oxford GEN format}}$ [@marchini2007]. SNPs are always organized by row and individuals per column. The first columns should include marker information and subsequent column genotype / sequence information per individual. $\color{blue}{\text{The package runs on autosomes}}$ (e.g., no sexual chromosome) and for $\color{blue}{\text{bi-allelic markers}}$.
 
-### 4.1.1 Fields for marker information
+### 5.1.1 Fields for marker information
 
 The number of columns used to described the markers is not fixed, by default we expect five columns with marker information (chromosome, marker name, position, first allele and second allele). Two columns are mandatory: the chromosome field and the position field. The other fields are not used. More or less columns can be provided and the order of the columns can be changed as the read function (\texttt{zoodata}) allows to specify the information.
 
@@ -143,7 +150,7 @@ The $\color{blue}{\text{position field}}$ should ideally be in $\color{blue}{\te
 
 SNP with a null position will be discarded. Ideally, this should done prior to load data in \texttt{RZooRoH}.
 
-### 4.1.2 Fields for genotype / sequence information
+### 5.1.2 Fields for genotype / sequence information
 
 After the columns for the marker information come the columns with the genotype / sequence information. One, two or three columns are expected per individual according to the format:
 
@@ -155,7 +162,7 @@ After the columns for the marker information come the columns with the genotype 
 
 * AD format: two columns per individual containing the number of reads for the first allele and for the second allele. This field is also available is some VCF files.
 
-### 4.1.3 Examples for the four data formats
+### 5.1.3 Examples for the four data formats
 
 Example of a file in __GT format__. There are four columns to describe the markers: chromosome, position (in bp), first allele and second allele. Then we have genotypes for ten individuals (we observe only 0's and 1's, AA and AB).
 \newline
@@ -195,7 +202,7 @@ myfile4 <- read.table(file4,header=FALSE)
 head(myfile4[,1:15])
 ```
 
-### 4.1.4 Converting from ped or VCF files
+### 5.1.4 Converting from ped or VCF files
 
 If your file is in ped or VCF format, you can easily convert them to the Oxford GEN format with PLINK (https://www.cog-genomics.org/plink/1.9/) or BCFtools (http://samtools.github.io/bcftools/bcftools.html#convert). \texttt{RZooRoH} is then able to read the Oxford GEN format with the GP format.
 
@@ -220,7 +227,7 @@ If some genotype probabilities are missing, with a value of "-nan", you must rep
 sed -e 's/-nan/0/g' file.gen > newfile.gen
 ```
 
-## 4.2 Reading the data
+## 5.2 Reading the data
 
 An analysis with \texttt{RZooRoH} requires three mains steps: reading the data, defining the model and running the model. Here we describe the first step but first the package must be loaded:
 
@@ -230,7 +237,7 @@ library(RZooRoH)
 
 The input data must be loaded with the ```zoodata``` function that creates a \texttt{zooin} object containing all the information for further analysis. With the ```zoodata``` function the user can specify the name of the data file, the genotype / sequence data format, the format of the marker information, minor allele frequencies (__MAF__) filtering rules and eventually the name of files with individuals IDs or with allele frequencies estimated previously (e.g., with a larger data set).
 
-### 4.2.1 Specifying the data file and genotype / sequence format
+### 5.2.1 Specifying the data file and genotype / sequence format
 
 The name of the data file is specified with the \texttt{genofile=filename} option and the genotype format with the \texttt{zformat} option. Four values are possible as described in sections 4.1.1 and 4.1.2: "gt", "gp", "pl" and "ad". The "gt" format is used when the \texttt{zformat} is not specified.
 
@@ -252,7 +259,7 @@ file2 <- system.file("exdata","BBB_NMP_ad_subset.txt",package="RZooRoH")
 BBB_AD <- zoodata(file2, zformat = "ad")
 ```
 
-### 4.2.2 Specifying the format for marker information
+### 5.2.2 Specifying the format for marker information
 
 As indicated in section 4.1.1, the ```zoodata``` function requires marker information that comes in the first columns of the file. Two fields are required, a column with the chromosome information and a column with the position. By default, ```zoodata``` assumes five columns with marker information and that the chromosome is indicated in the first position whereas the position is in the third column. In the two above examples, the marker information had the default format and there was no need to use options associated with format of marker information fields.
 
@@ -264,7 +271,7 @@ file1 <- system.file("exdata","BBB_PE_gt_subset.txt",package="RZooRoH")
 BBB_GT <- zoodata(file1, supcol = 4, poscol = 2, chrcol = 1)
 ```
 
-### 4.2.3 Minimal allele frequency threshold
+### 5.2.3 Minimal allele frequency threshold
 
 With the \texttt{min\_maf} option, the user can specify a threshold for MAF filtering. For instance, if we want to keep only marker with a MAF higher than 0.05:
 
@@ -274,7 +281,7 @@ BBB_GT <- zoodata(file1, supcol = 4, poscol = 2, chrcol = 1, min_maf = 0.05)
 Now, 929 markers remain after filtering. Note that the allele frequencies were estimated only with ten individuals. Some comments on filtering are providing in section 4.3.
 
 
-### 4.2.4 Additional external files (sample names and allele frequencies)
+### 5.2.4 Additional external files (sample names and allele frequencies)
 
 The ```zoodata``` function can extract information from two additional files with the \texttt{samplefile} and the \texttt{allelefreq} options.
 
@@ -289,7 +296,7 @@ BBB_GT <- zoodata(file1, supcol = 4, poscol = 2, chrcol = 1, samplefile = mysamp
 
 The \texttt{allelefreq} option is used to indicate a file containing the allele frequencies of the first allele. The file should contain only one column with these allele frequencies. An example of the use of this option is given later (in section 6.2.3). The use of external frequencies can be useful when these were obtained from a larger and more informative data set. For instance, when you want to run \texttt{RZooRoH} for a few individuals but estimates of allele frequencies are available from a large sample. Similarly, if you have only a few individuals sequenced but you have also frequencies obtained from a pool of individuals. The option allows also to use distinct frequencies such as estimates of ancestral allele frequencies. In addition, it avoids to re-estimate the frequencies for every run. Finally, skipping estimation of allele frequencies can save memory.
 
-### 4.2.4 Structure of the zooin object
+### 5.2.5 Structure of the zooin object
 
 The \texttt{zooin} object is intended for internal use. It contains the nine slots necessary for further analysis: genos, bp, chrbound, nind, nsnps, nchr, zformat, sample_ids. These can be accessed by using the "@" symbol. For instance, to obtain the genotype table from the \texttt{zooin} object called BBB_GT you need to type BBB_GT\@genos.
 
@@ -320,7 +327,7 @@ Finally, the zooin\@sample_ids contains the sample names:
 BBB_GT@sample_ids
 ```
 
-## 4.3. Comment on data filtering
+## 5.3. Comment on data filtering
 
 One important property of models using the allele frequencies (likelihood-based ROH or HMM) is that they account for marker allele frequencies and are therefore less sensitive to filtering rules. For rule-based ROH it would be important to remove monomorphic markers and eventually marker with low MAF. In the HMM, monomorphic markers are automatically ignored (because the emission probabilities are identical for HBD and non-HBD states) and when homozygous genotypes are observed, the support for HBD is weighted by the allele frequency. For instance, the probability to observe an homozygous AA is ${f_A}^2$ in non-HBD segments and approximately $f_A$ for HBD segments. So, the emission probability in non-HBD state is approximately equal to the emission probability in HBD state multiplied by $f_A$. If $f_A$ is high, the probabilities are close with little support in favor of HBD whereas for low $f_A$, the support for HBD is higher.
 
@@ -330,11 +337,11 @@ Similarly, our multiple HBD class model is quite robust to LD structure (or abse
 
 Our models achieved also good performances without LD pruning on data simulated with population genetics models, see @DG2017 for more details.
 
-## 5 Defining the model
+## 6 Defining the model
 
 With \texttt{RZooRoH} you can define different models. The most important parameters are the number of classes $K$ and the rates $R_k$ for each class. These rates can either be fixed by the user ("pre-defined") or estimated by \texttt{RZooRoH} for every individual. The optimal model to select depends on the objectives of the analysis and on the data set.
 
-### 5.1 The number of non-HBD classes is limited to one
+### 6.1 The number of non-HBD classes is limited to one
 
 In the \texttt{RZooRoH} package we use only one non-HBD class although a model with several non-HBD classes would be possible. There are three main reasons for this choice:
 
@@ -346,11 +353,11 @@ In the \texttt{RZooRoH} package we use only one non-HBD class although a model w
 
 Although the original FORTRAN implementation of \texttt{ZooRoH} included the possibility to model multiple non-HBD classes, we decided to model only one non-HBD class in the \texttt{RZooRoH} package to keep things simple.
 
-### 5.2 Models with one HBD class and one non-HBD class: \texttt{1R} model
+### 6.2 Models with one HBD class and one non-HBD class: \texttt{1R} model
 
 The one HBD class HMM are a special case of the models for which the rates $R_k$ are estimated. In that case, the same rate is used for HBD and non-HBD classes as in Leutenegger et al. [-@leutenegger2003], Narasimhan et al. [-@narasimhan2016] or Vieira et al. [-@vieira2016]. We recommend to us such a model only when all the autozygosity or HBD tracks trace back to one ancestor or several ancestors living in the same generation. That model might also require some LD pruning prior to analysis.  
 
-### 5.3 Models without pre-defined rates: \texttt{KR} models (\texttt{RZooRoh} will estimate the rates $R_k$)
+### 6.3 Models without pre-defined rates: \texttt{KR} models (\texttt{RZooRoh} will estimate the rates $R_k$)
 
 If the goal is to identify all HBD segments that can be captured with the marker density and to estimate the total autozygosity, then a model with a few HBD classes would be indicated. In that case, the optimal number of classes is a function of the marker density. For instance, @sole2017 showed with cattle data that for low-density arrays only one or two HBD classes are needed whereas for sequencing data, three or four HBD classes were recommended. The BIC can be used to compare models with different number of classes $K$ and to determine the optimal $K$ for each individual [@DG2017]. 
 
@@ -360,11 +367,11 @@ Optimizing $K$ is also more efficient computationally although convergence is mo
 
 However, this strategy is not recommended if the user wants to determine which generations of ancestors contribute to present autozygosity (e.g. to identify past bottlenecks, identify offspring from closely related individuals). In addition, such a strategy with estimation of $R_k$ rates makes comparisons across individuals uneasy because different individuals will have different $R_k$. Their autozygosity will therefore be partitioned in different HBD classes and eventually estimated with respect to different base populations.
 
-### 5.4 Models with pre-defined rates: \texttt{MixKR} models
+### 6.4 Models with pre-defined rates: \texttt{MixKR} models
 
 In a so-called \texttt{MixKR} model, the $R_k$ rates are pre-defined by the user and no longer estimated. Then, \texttt{RZooRoH} will only estimate the mixing coefficients that will influence the number of segments in each class.
 
-#### 5.4.1 Selecting the number of classes and their rates
+#### 6.4.1 Selecting the number of classes and their rates
 
 The user should select a set of classes that cover the whole range of HBD segments that can be captured with the genotyping array:
 
@@ -380,7 +387,7 @@ The rules and models proposed above should limit the risk to miss autozygosity b
 
 A more complex strategy to select the pre-defined HBD classes would be to first run \texttt{KR} models and select the optimal number of classes $K$ with the BIC. Then, we could select as rates $R_k$ for the \texttt{MixKR} model the median values of $R_k$ estimated with the optimal \texttt{KR} model (the median of $R_1$'s for $R_1$, the median of $R_2$'s for $R_2$, etc.). With that strategy, we would obtain a parsimonious \texttt{MixKR} model but the model selection step would be time consuming. It would also limit the risk to miss some autozygosity because the model is inappropriate.
 
-#### 5.4.2 Benefits of using pre-defined rates
+#### 6.4.2 Benefits of using pre-defined rates
 
 Compared to \texttt{KR} models (with estimation of the rates), \texttt{MixKR} models:
 
@@ -398,17 +405,17 @@ Compared to \texttt{KR} models (with estimation of the rates), \texttt{MixKR} mo
 
 Although computationally more intensive, we recommend the use of pre-defined models for these reasons and set "pre-defined" as default value for the \texttt{zoomodel} function.
 
-### 5.5 Using \texttt{zoomodel} to define your model
+### 6.5 Using \texttt{zoomodel} to define your model
 
-#### 5.5.1 Options
+#### 6.5.1 Options
 
 The \texttt{zoomodel} function creates a \texttt{zmodel} object needed to run our model. The function allows to define whether the $R_k$ rates are pre-defined (default) or not with the \texttt{predefined} option, the number of class $K$ (option $K$ = ...). The values of the $R_k$ can either be defined with the \texttt{base\_rate} option (default = 2). Then, the successive rates will be equal to $b^k$ where b is the selected base rate and k the class number. Alternatively, the \texttt{krates} option can be used to specify the $K$ rates. The \texttt{mix\_coef} determines the starting values for the mixing coefficients. In addition to these parameters, the user can provide the genotyping $\epsilon$ with option \texttt{err} (the probability to observe a heterozygous genotype in an HBD class) or sequencing error rates (the probability to have a sequencing error in one read, for the "ad" format) with option \texttt{seqerr}.
 
-#### 5.5.2 Output: the \texttt{zmodel} object
+#### 6.5.2 Output: the \texttt{zmodel} object
 
 The returned \texttt{zmodel} object contains five slots: the zmodel\@typeModel can be "mixkr" (for predefined = TRUE) or "kr" (for predefined = FALSE), the zmodel\@mix\_coef contains the starting values for the mixing coefficients of each class, the zmodel\@krates contains the (starting) values for the $R_k$ rates, the zmodel\@err contains the genotyping error rate and the zmodel\@seqerr contains the sequencing error rate.
 
-#### 5.5.3 Some examples of model definition with \texttt{zoomodel}
+#### 6.5.3 Some examples of model definition with \texttt{zoomodel}
 
 To define a default model, with 10 classes (9 HBD and 1 non-HBD class) with a ratio between successive rates of two:
 \newline
@@ -454,19 +461,19 @@ my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
 my.mod1R
 ```
 
-## 6 Running \texttt{zoorun}
+## 7 Running \texttt{zoorun}
 
 The \texttt{zoorun} function allows to estimate the parameters of the model, to estimate the global and locus specific realized autozygosity, to partition it in the different HBD classes and to identify the HBD segments.
 
-### 6.1 General options
+### 7.1 General options
 
 The \texttt{zoorun} requires two essential elements, the \texttt{zmodel} and  \texttt{zdata} objects that provide respectively the model and the data. These objects are obtained by running prior to the analysis the \texttt{zoomodel} and \texttt{zoodata} functions as described in sections 4 and 5. By default, the analysis will be performed on all individuals but the user can provide a list of individuals with the optional \texttt{ids} option (see examples below). The \texttt{ids} are the position of the individuals in the data file (columns, 1 for the first individual, 2 for the second, etc).
 
 In addition, the analysis can be run in parallel by specifying the number of threads with the \texttt{nT} option (equal to 1 by default).
 
-### 6.2 Parameter estimation
+### 7.2 Parameter estimation
 
-#### 6.2.1 Methods for parameter estimation
+#### 7.2.1 Methods for parameter estimation
 
 The parameter estimation is required prior to estimate the realized autozygosity or to identify the HBD segments. Therefore, parameter estimation is set to true by default. When the parameters have been estimated in a previous run, their value can be indicated in the \texttt{zmodel} object but this has to be done for each individual separately. This is one of the rare situations where the parameter estimation can be skipped.
 
@@ -487,7 +494,7 @@ In order to work with unconstrained parameters and to obtain ordered HBD classes
           
 Using the back-transformation, it can be verified that the rates $R_k$ from HBD classes are always positive and ordered, and that the mixing coefficient $M_k$ sum to 1 and are constrained between 0 and 1.
 
-#### 6.2.2 Options for parameter estimation
+#### 7.2.2 Options for parameter estimation
 
 The method for parameter estimation is selected with the \texttt{method} option that can be equal to "opti" (for the new optimization procedure), "estem" for the EM-algorithm or "no" for skipping parameter estimation. By default the value is set to "opti".
 
@@ -497,7 +504,7 @@ Two other optional arguments are related with the EM algorithm: the maximum numb
 
 When \texttt{optim} fails to converge, \texttt{zoorun} estimates the parameters automatically with the EM algorithm for the concerned individual.
 
-#### 6.2.3 Examples
+#### 7.2.3 Examples
 
 We start by loading a data set with six individuals from a cattle population genotyped for a low-density array. An additional file with the allele frequencies estimated on a larger sample is also available (this provides an illustration on how to use the \texttt{allelefreq} option).
 \newline
@@ -519,19 +526,19 @@ bbb_results2 <- zoorun(my.mod1R, bbb, method="estem",ids = c(1,2), convem=1e-12,
                        maxiter=100, minr=2, maxr=100)
 ```
 
-### 6.3 Estimating realized autozygosity (with partitioning in different HBD classes)
+### 7.3 Estimating realized autozygosity (with partitioning in different HBD classes)
 
 To estimate the realized autozygosity in each HBD class (the percentage of the genome from an individual associated with a specific HBD class), one has simply to set the option \texttt{fb} (for Forward-Backward algorithm) to true (the default value). These values are indeed estimated with the Forward-Backward algorithm (see section 2.3) that allows to compute at each marker position the probability to belong to each of the defined classes in the model. For instance, the realized autozygosity has been automatically estimated in the two previous examples (in the 6.2.3 section).
 
 The realized autozygosity in each HBD class is equal to the genome-wide average of the probabilities to belong to each HBD class computed at each marker position. These locus specific HBD probabilities can be obtained by setting the \texttt{localhbdp} option to TRUE. By default this value is set to FALSE because it generates large outputs (number of SNPs x number of classes x number of individuals). These values would be interesting for specific applications such as autozygosity mapping experiments.
 
-### 6.4 Identifying HBD segments
+### 7.4 Identifying HBD segments
 
 To identify HBD segments we rely on the Viterbi algorithm (see section 2.3). The Viterbi algorithm identifies the most likely sequence of HBD and non-HBD classes along the genome. At each marker, the genome is assigned to one class and HBD segments can be identified as stretches of consecutive markers assigned to the same HBD class. To use the Viterbi algorithm, one has simply to set the \texttt{vit} option to TRUE (the default value). As before, the HBD segments were automatically identified in the two previous examples (in the 6.2.3 section).
 
 Note that we prefer to work with HBD probabilities and the forward-backward algorithm than with the HBD segments and the Viterbi algorithm. We do not recommend to estimate the realized autozygosity as the sum of the length of HBD segments divided by the length of the genome (these estimators were found to be less accurate than those obtained with the Forward-Backward algorithm). Similarly, for autozygosity mapping experiments, we recommend to work with local HBD probabilities to take uncertainty into account. The HBD segments should be used only in applications requiring HBD segments or for visualization purposes.
 
-### 6.5 More examples
+### 7.5 More examples
 
 To obtain the locus specific HBD probabilities for all individuals with the previous example.
 \newline
@@ -545,7 +552,7 @@ Mod3R <- zoomodel(K=3,base_rate=10)
 bbb_mod3r <- zoorun(Mod3R, bbb, localhbd = TRUE)
 ```
 
-## 7 Description of results
+## 8 Description of results
 
 Results are grouped in a zres object with 12 slots. These slots can be accessed with the \@ symbol. Some slots describe the samples in the analysis:
 
@@ -561,7 +568,7 @@ bbb_results2@nind
 bbb_results2@ids
 ```
 
-### 7.1 Parameters (likelihood and convergence)
+### 8.1 Parameters (likelihood and convergence)
 
 Other slots of the zres object contain information on the parameter estimation: the estimated parameters, the log(likelihood) of the model, the BIC at convergence and the number of iterations:
 
@@ -595,7 +602,7 @@ cbind(bbb_results3@modlik,bbb_results3@modbic)
 ```
 These likelihoods or BIC are most useful to compare models or parameter estimation procedures.
 
-### 7.2 Realized autozygosity per class
+### 8.2 Realized autozygosity per class
 
 The realized autozygosity per HBD class, or the partitioning of the genome is different classes is one of the main outputs of the model. It is returned in the ..\@realized slot as a matrix with $K$ columns (the number of classes) and $nani$ lines (one per individual in the analysis). The values [i,j] are the genome-wide contributions (averaged over all positions) of class j to the genome of individual i.
 \newline
@@ -627,7 +634,7 @@ round(soay_mix10r@realized[1:20,],3)
 ```
 The columns represent the probability to belong to each class (averaged genome-wide). The columns represents the HBD classes with rates $R_k$ equal to 2, 4, 8, 16, 32, 64, 128, 256, 512 and the non-HBD class (last column). The autozygosity is higher than 0.20 for most individuals (the non-HBD class accounts for less than 0.80) and is concentrated in HBD classes 5 and 6 (with rates 32 and 64).
 
-### 7.3 Defining inbreeding coefficients (with respect to a base population)
+### 8.3 Defining inbreeding coefficients (with respect to a base population)
 
 The objective is not always to obtain the partitioning of autozygosity in different HBD classes (contribution from ancestors tracing back to different generations in the past). We are sometimes interested in the inbreeding coefficient (or the overall autozygosity). To estimate an inbreeding coefficient, we must define a base population. Segments inherited from ancestors present in generations more remote than the reference population will no longer be consider autozygous. With our model, we can decide that all classes with a rate larger than a threshold T are not consider as autozygous. This amounts to set the base population at approximately 0.5*T generations in the past and to estimate an inbreeding coefficient $F_{G-T}$, for instance $F_{G-50}$ would include all HBD classes with $R_k \leq 50$.
 
@@ -645,7 +652,7 @@ hist(x[,6],nc=20,main="",xlab="Inbreeding coefficient (T = 64)",
      xlim=c(0.15,0.35),col='tomato')
 ```
 
-### 7.4 Local HBD probabilities
+### 8.4 Local HBD probabilities
 
 The locus specific HBD probabilities (probabilities to belong to a state at a marker position) are stored in the ..\@hbdp slot. This slot is a list of matrices, one matrix per individual in the analysis. Each matrix has a dimension $K$ x $nsnp$ (the number of classes x number of SNPs). Element[i,j] represent the probability to be in class i at marker j. To access the matrix of one individual in the list, you must use "[[x]]". For instance, to extract HBD probabilities for the first 15 markers for individual 3:
 \newline
@@ -658,7 +665,7 @@ We obtain three columns, the probabilities for HBD class 1 ($R_k = 10$), for HBD
 t(bbb_mod3r@hbdp[[6]][,4700:4720])
 ```
 
-### 7.5 HBD segments
+### 8.5 HBD segments
 
 The HBD segments identified with the Viterbi algorithm are stored in the ..\@hbdseg, a data frame with one line per identified HBD segment and with nine columns accessed with the \$ symbol:
 
@@ -704,11 +711,11 @@ summary(soay_mix10r@hbdseg$number_snp)
 ```
 The largest HBD segment is more than 73 Mb long, the average length is 3.79 Mb and the mean number of SNP per identified HBD segment is 71.08.
 
-### 7.6 Accessor functions (easier access to slots)
+### 8.6 Accessor functions (easier access to slots)
 
 We propose four accessor functions to interact more conveniently with the zres object, in particular with the most useful slots (..\@realized, ..\@hbdp and ..\@hbdseg).
 
-#### 7.6.1 For realized autozygosity
+#### 8.6.1 For realized autozygosity
 
 To extract the table of realized autozygosity, you can use the function \texttt{realized} that takes as argument the name of the zres object and the numbers of the classes to be extracted (all by default). The function returns a data frame with one row per individual and one column per extracted classes. In addition, it gives names to the columns. For a pre-defined model, the names of HBD classes are "R\_X" where X is the value of the corresponding $R_k$ rate. For a model with rate estimation, the names of the HBD classes are "HBDclassX" where X is the number of the HBD class. For non-HBD classes, we use "NonHBD".
 To extract the entire table for the results in BBB cattle with the mod3r model:
@@ -722,7 +729,7 @@ To extract the contribution of the first six HBD classes for the sheep analysis:
 head(round(realized(soay_mix10r,seq(1,6)),5))
 ```
 
-#### 7.6.2 For inbreeding coefficients
+#### 8.6.2 For inbreeding coefficients
 
 To obtain the inbreeding coefficient $F_{G-T}$ as the sum of contributions from all HBD classes with a $R_k \leq T$, you can use the \texttt{cumhbd} function that takes as arguments the name of the zres object and the value of the threshold T (all HBD classes by default, when no threshold is specified).
 
@@ -749,7 +756,7 @@ cbind(F20,F50,F100,bbb_results3@krates[,1])
 ```
 We first observe that the function does not recommend to estimate an inbreeding coefficient when the $R_k$ rates are estimated. This is because in that situation, each individual has different HBD classes and then the number of classes included in the estimation would vary according to the individuals. Here, only individuals 2 and 6 have a non-zero inbreeding coefficient when setting T equal to 20. All individuals have a non-zero inbreeding coefficient with T equals to 50 with the exception of the first individual. Finally, all the estimated autozygosity is considered when T equals 100.
 
-#### 7.6.3 For HBD segments
+#### 8.6.3 For HBD segments
 
 The \texttt{rohbd} function can help to extract all HBD segments for a group of individuals and a genomic region. By default HBD segments for all individuals and the entire genome are extracted. The individuals are specified by ids = x where x is a vector with the individual numbers. The region is specified by chrom = y where y is the chromosome number. The coordinates can also be specified with the startPos and endPos arguments (these are not used if the chrom is NULL).
 
@@ -784,7 +791,7 @@ dim(roh25_10_20)
 head(roh25_10_20[,1:8])
 ```
 
-#### 7.6.4 For local HBD probabilities (locus specific)
+#### 8.6.4 For local HBD probabilities (locus specific)
 
 The \texttt{probhbd} function help to extract the local HBD probabilities for one individual in a specific region. HBD probabilities represent large amount of data. Therefore, we extract only a total HBD probability by summing over all HBD classes. As for the inbreeding coefficient, the user can specify a threshold T to determine which HBD classes should be used in the sum and considered as autozygous (all by default).
 
@@ -825,7 +832,7 @@ plot(y1b~x,type='l',ylim=c(0,1),ylab='',col='royal blue',xlab='',axes=FALSE)
 ```
 The curve is almost identical for individual 6 because the long HBD segment is associated to the first HBD class (rate $R_k = 10$). The HBD probabilities for the first individual are now equal to 0, because the evidence for short segments previously observed is associated with the second HBD class, with a higher rate (100) corresponding to shorter segments.
 
-### 7.6.5 Combining accessor functions with standard summary functions
+### 8.6.5 Combining accessor functions with standard summary functions
 
 The accessors can be combined with standard summary functions to obtain summary of the results (realized autozygosity, inbreeding coefficients and the HBD segments). We already had some examples with histograms of the inbreeding coefficients (see 7.6.2).
 
@@ -849,7 +856,7 @@ hist(allseg$length/1000000,xlab="Length of HBD segment (in cM)",main="",col='tom
 
 Alternatively, we provide plot functions to obtain an overview of the results and visualize them.
 
-### 7.7 Information for DoRIS
+### 8.7 Information for DoRIS
 
 DoRIS is a software [@palamara2012] that use IBD segments to infer past demographic history in populations. To that end, it uses the number of IBD segments observed in 1Mb bins (over a range of values). The distribution can help to infer past effective population size. The software works either with counts, either with proportion of the genome in different bins ("sharing"). HBD segments are a special case of IBD segments. With IBD segments, the number of pair of haplotypes compared is large that with HBD segments (equal to the number of individuals) but with HBD segments there is no need to phase the data. If the sample is large enough and autozygous segments are frequent, HBD segments can be used for the application.
 
@@ -878,11 +885,11 @@ matplot(dtw$win_st,cbind(dtw$sharing,dts$sharing,dtr$sharing),
 ```
 Clear differences are observed, with the Rasa Aragonesa individuals (orange) having few HBD segments in all bins, the Soay individuals (blue) having a high number of the shortest segments and the Wiltshire individuals (grey) presenting also large values for long HBD segments.
 
-## 8 Plotting
+## 9 Plotting
 
 Four plotting functions are helpful to interpret the results. They plot either the partitioning of the genome in HBD class at the population or the individual level, the contribution of different classes to the genome or HBD segments. We recommend to use the functions representing proportion of the genome in different HBD classes or partitioning of the genome in HBD classes __only with models with pre-defined rates__ (see section 5).  
 
-### 8.1. Proportion of the genome associated with different HBD classes (population)
+### 9.1. Proportion of the genome associated with different HBD classes (population)
 
 The \texttt{zooplot\_prophbd} represents the proportion of the genome associated with the different HBD classes at the population level. The input is a named list of zres object (list(name1 = zres1, name2 = zres2, ...)). The list can contain one or several populations. When provided, the names are used in the plot. Three format can be used with the \texttt{style} arguments: "barplot", "lines" and "boxplot" (boxplot can only be use with a single zres object).
 
@@ -906,7 +913,7 @@ zooplot_prophbd(list(Soay=soay_mix10r,Wiltshire=wilt_mix10r,
                      RasaAragonesa=rara_mix10r),style='lines', cumulative = TRUE)
 ```
 
-### 8.2. Proportion of the genome associated with different HBD classes (individuals)
+### 9.2. Proportion of the genome associated with different HBD classes (individuals)
 
 The \texttt{zooplot\_individuals} function represents the same results as the \texttt{zooplot\_prophbd} function but at an individual level. Each individual is represented by a line (no barplots or boxplots). The function plots either the proportion of the genome in different HBD classes or cumulative proportions (see above) if \texttt{cumulative} is set to \texttt{TRUE}. The average value of the population is added in red. As before, the input is a named list of zres object (list(name1 = zres1, name2 = zres2, ...)). The list can contain one or several populations. When provided, the population names are used in the plot. The \texttt{ncols} argument determines the number of graphs (populations) plotted next to each other.
 \newline
@@ -916,7 +923,7 @@ zooplot_individuals(pop2, cumulative = TRUE)
 ```
 We observe than Soay sheep present higher levels of autozygosity and that patterns are relatively homogeneous in both populations.
 
-### 8.3. Partitioning individual genomes in different HBD classes
+### 9.3. Partitioning individual genomes in different HBD classes
 
 The \texttt{zooplot\_partitioning} function represents for each individual the proportion of the genome in each HBD class. Each individual is represent as a stacked barplot. The total height represents the total autozygosity level. The contribution of each HBD class (in \% of the genome) is represented as a bar of a different color (black, brown, red for the most recent HBD classes).
 
@@ -935,7 +942,7 @@ zooplot_partitioning(pop3, randomids = TRUE, nrandom = c(20,20,20), plotids = FA
 ```
 Soay and Wiltshire populations present higher levels of autozygosity. The Wiltshire individuals present more recent autozygosity (brown, red, orange bars) compared to the Soay individuals where light yellow ($R_k = 32$) and green ($R_k = 64$) dominate, indicating that the Wiltshire individual have more recent common ancestors causing autozygosity.
 
-### 8.4. Plotting identified HBD segments
+### 9.4. Plotting identified HBD segments
 
 The \texttt{zooplot\_hbdseg} function plots the identified segments for a selected region. The region is specified with the
 \texttt{chr} and \texttt{coord} arguments. A minimal segment size can be selected with the \texttt{minlen} arguments.
@@ -955,7 +962,7 @@ knitr::include_graphics("Effect_density_error_lowfoldII.pdf")
 knitr::include_graphics("BBB_hdbseg_densities.pdf")
 ```
 
-## 9 Impact of data informativity
+## 10 Impact of data informativity
 
 The genotyping technology will impact the amount of available data to characterize autozygosity and identify HBD segments. The method will be more efficient with more SNPs per HBD segment, with less genotyping / sequencing errors, when markers are more informative (higher minor allele frequency - MAF) or when sequencing is performed at higher coverage. There are no simple guidelines indicating how well the method will perform as it depends on many factors specific to data sets. Still we performed some simulations to asses the impact of different factors on the mean absolute errors (MAE) of HBD probabilities, the absolute value of the difference between the HBD probability and the true HBD status [@DG2017]. The results are summarized in Figure 4, that can help to understand the impact of lower marker density, marker informativity or sequencing coverage and to estimate the number of SNP required per HBD segment to obtain descent estimates.
 
@@ -967,5 +974,5 @@ Regarding the genome-wide autozygosity level, its association with the number of
 
 In addition to these simulations, we show results obtained with low-fold sequencing in Belgian Blue beef cattle to illustrate with real data that the approach can indeed capture HBD segments even with low-fold sequencing. Figure 5 represents for 46 individuals HBD segments obtained with genotyping arrays (~ 2-3 SNPs per Mb, ~ 10 SNPs per Mb and ~ 200 SNPs per Mb) and with whole genome sequencing (10x, 0.5x and 1x). The results from the 1x are similar to those of the highest SNPs density (in terms of number of segments and their length) whereas the results from the 0.5x lie in between those obtained with ~10 SNPs per Mb and those obtained with ~ 200 SNPs per Mb.
 
-## 10 References
+## 11 References
 

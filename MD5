@@ -1,4 +1,4 @@
-33142042df244a7ef2f5fceecfce2392 *DESCRIPTION
+f2855bed14f6304bb70743ae93247e47 *DESCRIPTION
 b2fccdbc1f1570bdfc5059de7a27b62e *NAMESPACE
 302518dfaa141ef7f5b1673a451b786c *R/data.R
 e7efb676ed02a1fa6f8bc3b0a87b94e2 *R/lib_kr.R
@@ -6,7 +6,7 @@ acd7b095b3468c37f4ad05ff018c67ec *R/lib_mixkr.R
 8fc0ce871e6ad58369a22a66cefc1a96 *R/prob_emission.R
 d3ebae64ad38c96a736a06f44f1bd5f6 *R/read_zdata.R
 a92017dec9ff53544e5945f3700fce82 *R/zooplot_segments.R
-68378a57dda5f44c1042f6f2d158b054 *R/zooroh.R
+3728b1741a2d253a65cdb4848dfe54d2 *R/zooroh.R
 a14aa326a4bcd13a579015b5b3c3cf37 *R/zooroh_accessor.R
 c58c4a4b79305e1fe6882d9506ff87ed *R/zooroh_model.R
 c2b671a5f60c578a50887e04a5ae954a *R/zplot_individual.R
@@ -25,9 +25,10 @@ eb12ccb73703035459070522cdb78e5e *data/soay_mix10r.RData
 e630101b3e0d7bce671e3b2c02ca347f *data/typs.RData
 204566d4f41c08f08caee17a3ae1c252 *data/typsfrq.RData
 f2711d537d799bd1d6f698620dfa31d7 *data/wilt_mix10r.RData
+7b91a6e84dab785ec0a44246d18fb700 *inst/CITATION
 81f6435ccc0fd1f34c4697c8171bb453 *inst/doc/zooroh-vignette.R
-6f616e9a122e246fcb3a633ecbd97e56 *inst/doc/zooroh-vignette.Rmd
-06823819f39beaef688056525ae98411 *inst/doc/zooroh-vignette.pdf
+4906e7546fe20ea8e48cd5c25b3bd33c *inst/doc/zooroh-vignette.Rmd
+12f472b04225a30c9a0598332fd32afa *inst/doc/zooroh-vignette.pdf
 ccf009f88ff00893e8e96bf8c00bdb95 *inst/exdata/BBB_NMP_GP_subset.txt
 f7195865d31b2aa3ba16ae5c4eb42512 *inst/exdata/BBB_NMP_ad_subset.txt
 66278d9dd795a9cccbd587b63399e145 *inst/exdata/BBB_NMP_pl_subset.txt
@@ -70,7 +71,7 @@ e7a7406db9b3530ab39f6d414ee48f53 *src/zooViterbi.f90
 327facc22a8cd4005d8c650a30163cce *src/zoolik.f90
 f85cef421d1b6ec23f1fbec47b6da94d *tests/testthat.R
 04028a05e35ed5ea441d72a1c03ffce1 *tests/testthat/test1.R
-65472e125509eca26fe8d2e6e9b7634d *tests/testthat/test2.R
+844e7382607375d7aa103778f4b62ec4 *tests/testthat/test2.R
 a4ecb925465606ccd29a04acc8583b3a *vignettes/BBB_hdbseg_densities.pdf
 fb0694195e0028174593abd0082d3738 *vignettes/Effect_density_error_lowfoldII.pdf
 fe4426d9d3a076635d24adec1b00cb83 *vignettes/Fig4hb_barplot_filteredRR.pdf
@@ -79,4 +80,4 @@ c62142aa5777b16e16db048b52a228a9 *vignettes/Figure1.pdf
 59123240a52c74bf180f354c080a38f0 *vignettes/biomed-central.csl
 2ee8a5e250b5e4a1693aa412cfe57bd5 *vignettes/genetics.csl
 c567a0986a8194e42b6096f8f01f40eb *vignettes/rzoo.bib
-6f616e9a122e246fcb3a633ecbd97e56 *vignettes/zooroh-vignette.Rmd
+4906e7546fe20ea8e48cd5c25b3bd33c *vignettes/zooroh-vignette.Rmd
