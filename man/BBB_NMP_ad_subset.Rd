@@ -4,7 +4,8 @@
 \name{BBB_NMP_ad_subset}
 \alias{BBB_NMP_ad_subset}
 \title{Example for "ad" format specification}
-\format{A data frame with 1,000 rows and 25 variables:
+\format{
+A data frame with 1,000 rows and 25 variables:
 \describe{
   \item{chr}{The chromosome number}
   \item{marker_name}{The marker id}
@@ -15,7 +16,8 @@
   \item{id1_ad2}{The read count for the first individual at the second markrer}
   \item{id2_ad1}{The read count for the second individual at the first markrer}
   \item{id2_ad2}{The read count for the second individual at the second markrer}
-  \item{id3_ad1, id3_ad2, id4_ad1, id4_ad2, id5_ad1, id5_ad2, id6_ad1, id6_ad2, id7_ad1, id7_ad2, id8_ad1, id8_ad2, id9_ad1, id9_ad2, id10_ad1, id10_ad2}{The read counts for the other individuals} }}
+  \item{id3_ad1, id3_ad2, id4_ad1, id4_ad2, id5_ad1, id5_ad2, id6_ad1, id6_ad2, id7_ad1, id7_ad2, id8_ad1, id8_ad2, id9_ad1, id9_ad2, id10_ad1, id10_ad2}{The read counts for the other individuals} }
+}
 \usage{
 BBB_NMP_ad_subset
 }

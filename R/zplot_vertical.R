@@ -72,8 +72,10 @@ zooplot_partitioning <- function (input, cols=NULL, plotids=TRUE, toplot=NULL,
 
   if (is.null (cols)) {
     allcols <-  c('#330000','saddlebrown','brown1','orange', "#FFFFB3",'#33FF33','#00CC66','#3399FF','#0066CC','#003366',"blueviolet", "violet",    '#666666','whitesmoke')
+    incol <- 0
   }else {
     allcols <- cols
+    incol <- 1
   }
   set.seed=seed
   ns <- c()
@@ -140,20 +142,26 @@ zooplot_partitioning <- function (input, cols=NULL, plotids=TRUE, toplot=NULL,
     stop ("different models used for the datas\n")
   }else {
     k <- unique (ks)
-    if (k >14 | length (allcols) <k  ) {
-      stop ('Please Provide ',  k,  'colors\n')
-    }else {
-      if (k==14) {
-        cols <- allcols
-      }else if(k < 8){
-        cols <- allcols [3:(k+2)]
-        cols[k] <- allcols[14]
-      }else if (input[[1]]@krates[1,1] < 4) {
-        cols <- allcols [1:k]
-        cols[k] <- allcols[14]
-      }else if (input[[1]]@krates[1,1] >= 4) {
-        cols <- allcols [2:(k+1)]
-        cols[k] <- allcols[14]
+    if(incol ==0){
+      if (k >14 | length (allcols) <k  ) {
+        stop ('Please Provide ',  k,  'colors\n')
+      }else {
+        if (k==14) {
+          cols <- allcols
+        }else if(k < 8){
+          cols <- allcols [3:(k+2)]
+          cols[k] <- allcols[14]
+        }else if (input[[1]]@krates[1,1] < 4) {
+          cols <- allcols [1:k]
+          cols[k] <- allcols[14]
+        }else if (input[[1]]@krates[1,1] >= 4) {
+          cols <- allcols [2:(k+1)]
+          cols[k] <- allcols[14]
+        }
+      }
+    }else if(incol ==1){
+      if (length (allcols) <k) {
+        stop ('Please Provide ',  k,  'colors\n')
       }
     }
   }

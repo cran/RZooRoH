@@ -4,9 +4,20 @@
 \alias{zoorun}
 \title{Run the ZooRoH model}
 \usage{
-zoorun(zoomodel, zooin, ids = NULL, method = "opti", fb = TRUE,
-  vit = TRUE, minr = 0, maxr = 1e+08, maxiter = 1000,
-  convem = 1e-10, localhbd = FALSE, nT = 1)
+zoorun(
+  zoomodel,
+  zooin,
+  ids = NULL,
+  method = "opti",
+  fb = TRUE,
+  vit = TRUE,
+  minr = 0,
+  maxr = 1e+08,
+  maxiter = 1000,
+  convem = 1e-10,
+  localhbd = FALSE,
+  nT = 1
+)
 }
 \arguments{
 \item{zoomodel}{A valid zmodel object as defined by the zoomodel function. The

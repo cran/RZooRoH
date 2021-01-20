@@ -4,7 +4,8 @@
 \name{genoex}
 \alias{genoex}
 \title{Subset of a dataset with genotypes for 20 sheeps}
-\format{A data frame with 14,831 rows and 25 variables:
+\format{
+A data frame with 14,831 rows and 25 variables:
 \describe{
   \item{chr}{The chromosome number}
   \item{marker_name}{The name of the marker}
@@ -13,7 +14,8 @@
   \item{allele2}{The name of the second marker allele}
   \item{id1}{The genotype for the first individual}
   \item{id2}{The genotype for the second individual}
-  \item{id3, id4, id5, id6, id7, id8, id9, id10, id11, id12, id13, id14, id15, id16, id17, id18, id19, id20}{The genotypes of the remaining individuals} }}
+  \item{id3, id4, id5, id6, id7, id8, id9, id10, id11, id12, id13, id14, id15, id16, id17, id18, id19, id20}{The genotypes of the remaining individuals} }
+}
 \usage{
 genoex
 }

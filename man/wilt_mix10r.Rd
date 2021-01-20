@@ -4,7 +4,9 @@
 \name{wilt_mix10r}
 \alias{wilt_mix10r}
 \title{The result of an analysis on 23 sheeps from Wiltshire population.}
-\format{the results are a zres object.}
+\format{
+the results are a zres object.
+}
 \usage{
 wilt_mix10r
 }

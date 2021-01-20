@@ -4,7 +4,9 @@
 \name{soay_mix10r}
 \alias{soay_mix10r}
 \title{The result of an analysis on 110 sheeps from the Soay population.}
-\format{the results are a zres object.}
+\format{
+the results are a zres object.
+}
 \usage{
 soay_mix10r
 }

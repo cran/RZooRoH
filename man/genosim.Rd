@@ -4,7 +4,8 @@
 \name{genosim}
 \alias{genosim}
 \title{Example from a small simulated data set}
-\format{A data frame with 10,000 rows and 24 variables:
+\format{
+A data frame with 10,000 rows and 24 variables:
 \describe{
   \item{chr}{The chromosome number}
   \item{pos}{The position of the marker}
@@ -13,7 +14,8 @@
   \item{id1}{The genotype for the first individual}
   \item{id2}{The genotype for the second individual}
   \item{id3, id4, id5, id6, id7, id8, id9, id10, id11, id12, id13, id14, id15, id16, id17, id18, id19, id20}{The genotypes of the remaining individuals}
- }}
+ }
+}
 \usage{
 genosim
 }

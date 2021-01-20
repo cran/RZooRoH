@@ -327,8 +327,10 @@ zoorun <- function(zoomodel, zooin, ids = NULL, method = "opti",
   if(.Platform$OS.type != "windows"){registerDoParallel(cores= nT)}
 
   if(zoomodel@typeModel != "mixkr" & zoomodel@typeModel != "MIXKR"
-     & zoomodel@typeModel != "kr" & zoomodel@typeModel != "KR"){
-    print("The model type must be kr or mixkr")
+     & zoomodel@typeModel != "mixkl" & zoomodel@typeModel != "MIXKL"
+     & zoomodel@typeModel != "kr" & zoomodel@typeModel != "KR"
+     & zoomodel@typeModel != "kl" & zoomodel@typeModel != "KL"){
+    print("The model type must be kr, kl, mixkr or mixkl")
   }
 
   opti=FALSE;estem=FALSE
@@ -363,10 +365,22 @@ zoorun <- function(zoomodel, zooin, ids = NULL, method = "opti",
         run_mixkr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
+    if(zoomodel@typeModel == "mixkl" || zoomodel@typeModel == "MIXKL"){
+      xx <- foreach (i=1:length(ids), .combine=c) %do% {
+        id <- ids[i]
+        run_mixkl(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+      }
+    }
     if(zoomodel@typeModel == "kr" || zoomodel@typeModel == "KR"){
       xx <- foreach (i=1:length(ids), .combine=c) %do% {
         id <- ids[i]
         run_kr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+      }
+    }
+    if(zoomodel@typeModel == "kl" || zoomodel@typeModel == "KL"){
+      xx <- foreach (i=1:length(ids), .combine=c) %do% {
+        id <- ids[i]
+        run_kl(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
   }else{
@@ -376,10 +390,22 @@ zoorun <- function(zoomodel, zooin, ids = NULL, method = "opti",
         run_mixkr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
+    if(zoomodel@typeModel == "mixkl" || zoomodel@typeModel == "MIXKL"){
+      xx <- foreach (i=1:length(ids), .combine=c) %dopar% {
+        id <- ids[i]
+        run_mixkl(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+      }
+    }
     if(zoomodel@typeModel == "kr" || zoomodel@typeModel == "KR"){
       xx <- foreach (i=1:length(ids), .combine=c) %dopar% {
         id <- ids[i]
         run_kr(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
+      }
+    }
+    if(zoomodel@typeModel == "kl" || zoomodel@typeModel == "KL"){
+      xx <- foreach (i=1:length(ids), .combine=c) %dopar% {
+        id <- ids[i]
+        run_kl(zooin,id, zrates, zmix, opti, estem, fb, vit, gerr, seqerr, minr, maxr, maxiter, convem, localhbd)
       }
     }
   }
@@ -620,4 +646,224 @@ run_kr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALS
   return(zresu)
 }
 
+#### run mixkl model
+
+run_mixkl <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit = FALSE,
+                      gerr = 0.001, seqerr = 0.001, minr = 0, maxr = 100000000,
+                      maxiter = 1000, convem = 1e-10, localhbd = FALSE){
+  K <- length(zmix)
+  #  zrs=NULL;pem=NULL
+  #  zrs <<- zrates
+  #  pem <<- pemission(id, gerr, seqerr, zformat = .GlobalEnv$zooin@zformat)
+  pem <- pemission(zooin, id, gerr, seqerr, zformat = zooin@zformat)
+
+  if(opti){
+    zpar <- array(0,K-1)
+    #    for (j in 1:(K-1)){zpar[j]=log(zmix[j]/zmix[K])}
+    for (j in 1:(K-1)){zpar[j]=log(zmix[j]/(1-zmix[j]))} #### NEW: First difference with MixKR
+
+    niter=NULL;niter <<- 0
+    checkoptim=NULL;checkoptim <<- 1
+    tryCatch(optires <- optim(zpar, lik_mixkl, zooin = zooin, pem = pem, zrs = zrates, method="L-BFGS-B",
+                              control = list(trace=TRUE, REPORT=10000)),
+             error=function(e){cat("Warning, error returned by optim - replaced by EM ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
+    if(.GlobalEnv$checkoptim ==0){estem = TRUE; fb =FALSE}
+    if(.GlobalEnv$checkoptim == 1){
+      #      zmix <- exp(optires$par[1:(K-1)])/(1+sum(exp(optires$par[1:(K-1)])))
+      zmix <- exp(optires$par[1:(K-1)])/(1+exp(optires$par[1:(K-1)]))
+      zmix[K] <- 1 - zmix[K-1] #### NEW: zmix[K] <- 1-zmix[K-1] (just ignore that parameter?)
+    }
+  }
+  if(estem){
+    estimrates <- 0
+    onerate <- 0
+    outem <- EM_lay(zooin,id, pem, zrates, zmix, estimrates, onerate, maxiter, minr, maxr, convem, localhbd)
+    print(paste("EM algorithm, iterations and loglik ::",outem[[5]],outem[[3]],sep=" "))
+    zmix <- outem[[2]]
+  }
+  if(fb){
+    outfb <- fb_lay(zooin,id,pem,zrates,zmix,localhbd)
+  }
+  if(vit){
+    outvit <- viterbi_lay(zooin,id,pem,zrates,zmix)
+  }
+
+  ##### renvoie toujours les paramètres
+  zresu <- new("oneres")
+  loglik <- NA
+  bicv <- NA
+  zrates <- round(zrates,3)
+  if(opti){
+    if(.GlobalEnv$checkoptim == 1){
+      loglik <- -optires$value ### optim miminizes -log(lik)
+      #    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)}
+      bicv <- -2 * loglik + log(zooin@nsnps)*(K-1)}
+  }
+  if(estem){
+    loglik <- outem[[3]]
+    #    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)
+    bicv <- -2 * loglik + log(zooin@nsnps)*(K-1)
+    zrates <- outem[[1]]
+    zmix <- outem[[2]]
+    .GlobalEnv$niter <- outem[[5]]
+    zresu@realized <- outem[[4]]
+    if(localhbd){zresu@hbdp <- outem[[6]]}
+  }
+
+  zresu@mixc <- zmix
+  zresu@krates <- zrates
+  zresu@modlik <- loglik
+  zresu@modbic <- bicv
+  zresu@num <- id
+  zresu@niter <- .GlobalEnv$niter
+  zresu@optimerr <- -1
+  if(opti){zresu@optimerr <- .GlobalEnv$checkoptim}
+
+  if(fb){
+    if(!localhbd){zresu@realized <- outfb}
+    if(localhbd){
+      zresu@realized <- outfb[[1]]
+      zresu@hbdp <- outfb[[2]]
+    }
+  }
+  if(vit){
+    zresu@hbdseg <- outvit
+  }
+  return(zresu)
+}
+
+#### run kl model
+
+run_kl <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALSE, vit = FALSE,
+                   gerr = 0.001, seqerr = 0.001, minr = 1, maxr = 100000000,
+                   maxiter = 1000, convem = 1e-10, localhbd = FALSE){
+  #  pem=NULL
+  #  pem <<- pemission(id,  gerr, seqerr, zformat = .GlobalEnv$zooin@zformat)
+  pem <- pemission(zooin,id,  gerr, seqerr, zformat = zooin@zformat)
+  K <- length(zmix) #### vérifier que length(zmix) = length (zrates)
+  if(opti){
+    if(K > 2){
+      zpar <- array(0,2*K-2) #### New, we don't need the rates for non-hbd segments
+      zpar[1] <- log(zrates[1])
+      for(j in 2:(K-1)){zpar[j] <- log(zrates[j]-zrates[j-1])}
+      #zpar[K]=log(zrates[K])
+      #for (j in 1:(K-1)){zpar[K+j]=log(zmix[j]/zmix[K])}
+      for (j in 1:(K-1)){zpar[K+j-1]=log(zmix[j]/(1-zmix[j]))} #### NEW: First difference with MixKR
+    } else { #### 1R model
+      zpar <- array(0,2)
+      zpar[1] <- log(zrates[1]) ### the common rate
+      zpar[2] <- log(zmix[1]/zmix[2])
+    }
+
+    niter=NULL;niter <<- 0
+    checkoptim=NULL;checkoptim <<- 1
+
+    if(maxr < 100000000 | minr > 0){
+      if(K == 2){
+        lowpar <- c(log(minr), -Inf)
+        uppar <- c(log(maxr), Inf)
+      }
+      if(K > 2){
+        lowpar <- c(rep(log(minr),K), rep(-Inf,(K-1)))
+        uppar <- c(rep(log(maxr),K), rep(Inf,(K-1)))
+      }
+      tryCatch(optires <- optim(zpar, lik_kl, zooin = zooin, pem = pem, method="L-BFGS-B", lower = lowpar, upper = uppar,
+                                control = list(trace=TRUE, REPORT=10000)),
+               error=function(e){cat("Warning, error returned by optim - EM not available with this model ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
+    }else{
+      tryCatch(optires <- optim(zpar, lik_kl, zooin = zooin, pem = pem, method="L-BFGS-B",
+                                control = list(trace=TRUE, REPORT=10000)),
+               error=function(e){cat("Warning, error returned by optim - rEM not available with this model ::",id,"\n"); .GlobalEnv$checkoptim <- 0})
+    }
+
+    #if(.GlobalEnv$checkoptim ==0){estem = TRUE; fb =FALSE}
+    if(.GlobalEnv$checkoptim ==0){estem = FALSE; fb =FALSE} ### CHANGED
+
+    if(.GlobalEnv$checkoptim == 1){
+      if(K > 2){
+        zrates[1] <- exp(optires$par[1])
+        for (j in 2:(K-1)){zrates[j] <- zrates[j-1] + exp(optires$par[j])}
+        #zrates[K] <- exp(optires$par[K])
+        zrates[K] = zrates[K-1]
+        #zmix <- exp(optires$par[(K+1):(2*K-1)])/(1+sum(exp(optires$par[(K+1):(2*K-1)])))
+        #zmix[K] <- 1 - sum(zmix[1:(K-1)])
+        zmix <- exp(optires$par[(K):(2*K-2)])/(1+exp(optires$par[(K):(2*K-2)])) ### 1:(K-1) rates, K:(2K-2) mixing
+        zmix[K] <- 1 - zmix[K-1] #### NEW: zmix[K] <- 1-zmix[K-1] (just ignore that parameter?)
+      } else {
+        zrates <- exp(optires$par[1])
+        zrates[2] <- zrates[1]
+        zmix[1] <- 1/(1+exp(-optires$par[2]))
+        zmix[2] <- 1 - zmix[1]
+      }
+    }
+  }
+
+  if(estem){
+    print(c("EM not implemented with this model!")) ## CHANGED
+    #estimrates <- 1
+    #onerate <- 0
+    #if (K ==2) onerate <- 1
+    #if(minr < 1){minr=1}
+    #outem <- EM(zooin,id, pem, zrates, zmix, estimrates, onerate, maxiter, minr, maxr, convem, localhbd)
+    #print(paste("EM algorithm, iterations and loglik ::",outem[[5]],outem[[3]],sep=" "))
+    #zrates <- outem[[1]]
+    #zmix <- outem[[2]]
+  }
+  if(fb){
+    outfb <- fb_lay(zooin,id,pem,zrates,zmix, localhbd)
+  }
+  if(vit){
+    outvit <- viterbi_lay(zooin,id,pem,zrates,zmix)
+  }
+
+  ##### renvoie toujours les paramètres
+  zresu <- new("oneres")
+  loglik <- NA
+  bicv <- NA
+  zrates <- round(zrates,3)
+  if(opti){
+    if (.GlobalEnv$checkoptim == 1){
+      loglik <- -optires$value ### optim miminizes -log(lik)
+      #    if(K > 2)bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(2*K-1)
+      #    if(K == 2)bicv <- -2 * loglik + 2*log(.GlobalEnv$zooin@nsnps)
+      if(K > 2)bicv <- -2 * loglik + log(zooin@nsnps)*(2*K-1)
+      if(K == 2)bicv <- -2 * loglik + 2*log(zooin@nsnps)
+    }}
+#  if(estem){
+#    loglik <- outem[[3]]
+#    #    bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(K-1)
+#    #    if(K > 2)bicv <- -2 * loglik + log(.GlobalEnv$zooin@nsnps)*(2*K-1)
+#    #    if(K == 2)bicv <- -2 * loglik + 2*log(.GlobalEnv$zooin@nsnps)
+#    bicv <- -2 * loglik + log(zooin@nsnps)*(K-1)
+#    if(K > 2)bicv <- -2 * loglik + log(zooin@nsnps)*(2*K-1)
+#    if(K == 2)bicv <- -2 * loglik + 2*log(zooin@nsnps)
+#    zrates <- outem[[1]]
+#    zmix <- outem[[2]]
+#    .GlobalEnv$niter <- outem[[5]]
+#    zresu@realized <- outem[[4]]
+#    if(localhbd){zresu@hbdp <- outem[[6]]}
+#  }
+
+  zresu@mixc <- zmix
+  zresu@krates <- zrates
+  zresu@modlik <- loglik
+  zresu@modbic <- bicv
+  zresu@num <- id
+  zresu@niter <- .GlobalEnv$niter
+  zresu@optimerr <- -1
+  if(opti){zresu@optimerr <- .GlobalEnv$checkoptim}
+
+  if(fb){
+    if(!localhbd){zresu@realized <- outfb}
+    if(localhbd){
+      zresu@realized <- outfb[[1]]
+      zresu@hbdp <- outfb[[2]]
+    }
+  }
+  if(vit){
+    zresu@hbdseg <- outvit
+  }
+
+  return(zresu)
+}
 

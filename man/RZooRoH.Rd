@@ -3,7 +3,6 @@
 \docType{package}
 \name{RZooRoH}
 \alias{RZooRoH}
-\alias{RZooRoH-package}
 \title{RZooRoH: A package for estimating global and local individual autozygosity.}
 \description{
 Functions to identify Homozygous-by-Descent (HBD) segments associated with

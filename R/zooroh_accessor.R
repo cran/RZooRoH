@@ -254,3 +254,75 @@ if(method=='sharing'){return(out2)}
 
 }
 
+#'Realizes a simulation using a zooroh data set and a zooroh model
+#'
+#'Performs a simulation under a model similar too ZooRoH. It simulates the
+#'genome as a mosaic of HBD and non-HBD segments. Several non-HBD classes can be
+#'simulated. Classes with high rates (short segments from ancient ancestors) are
+#'simulated first. Then, more recent classes are subsequently added. Recent HBD
+#'segments will mask more ancient HBD segments. See details in the method
+#'published in Molecular Ecology (Druet and Gautier, 2017). Genotypes are
+#'simulated using provided allele frequencies (from the sample), their genetic
+#'distances, the number of chromosomes and the number of SNPs. These simulations
+#'do not take into account linkage disequilibrium information. This simulation
+#'tool can for instance be used to check whether there is enough information in
+#'the data set to estimate HBD segments and their partitioning in multiple
+#'classes. Note that this simulation tool is not computationally efficient.
+#'
+#'@param simdata The name of the zdata object created by the zoodata function.
+#'
+#'@param simmodel The name of the zmodel object created by the zoomodel
+#'  function. The simulation program uses only the number of classes, their rate
+#'  and their mixing coefficient (it is the same for a pre-defined model or
+#'  not).
+#'
+#'@param nsim The number of simulated individuals.
+#'
+#'@param fullout Indicates whether a more detailed output is requested.
+#'
+#'@return The function simulates genotypes with the properties of the data set
+#'  (number of SNPs, genetic map, allele frequencies) and according to the
+#'  specified model (number of HBD classes, rate of the classes and proportion
+#'  of mixing). The simulation is created as in Druet and Gautier (2017) and new
+#'  autozygosity masks more ancient autozygosity. The output is a new zoodata
+#'  object that can be analyzed with the zoorun function.
+#'
+#'  If a more detailed output is requested with the fullout parameter, then the
+#'  function returns list (for instance simres) containing the zoodata, a matrix
+#'  with realized inbreeding per individual, estimated at SNP positions, in the
+#'  different classes (with 1 being the most ancient class (non-HBD) and the
+#'  highest number corresponds to the most recent class), and a matrix
+#'  containing for each individual and at each marker position the simulated
+#'  class (1 for non-HBD, 2 for most ancient HBD, etc). These elements can be
+#'  accessed using the simres[[1]], simres[[2]] and simres[[3]], respectively.
+#'@export
+
+zoosimd <- function(simdata, simmodel, nsim, fullout = FALSE) {
+
+  nlayers = length(simmodel@krates)-1
+  runsim <- .Fortran("zoosim",as.integer(nlayers),as.integer(simdata@nchr),as.integer(simdata@nsnps),
+                 as.double(simdata@freqs),as.integer(simdata@bp),
+                 as.integer(simdata@chrbound),as.double(simmodel@krates[nlayers:1]),
+                 as.double(simmodel@mix_coef[nlayers:1]),as.double(simmodel@err),as.integer(nsim),
+                 matrix(as.integer(0),nsim,simdata@nsnps),
+                 matrix(as.double(0),nsim,nlayers),matrix(as.integer(0),nsim,simdata@nsnps))
+
+  simout <- new("zdata")
+  simout@genos <- t(runsim[[11]])
+  simout@bp <- simdata@bp
+  simout@chrnames <- simdata@chrnames
+  simout@chrbound <- simdata@chrbound
+  simout@nind <- nsim
+  simout@nsnps <- simdata@nsnps
+  freqs <- apply(simout@genos, 1, getfreq1)
+  simout@freqs <- freqs
+  simout@nchr <- simdata@nchr
+  simout@zformat = "gt"
+
+  if(!fullout)return(simout)
+  if(fullout){
+    simres=list(simout,runsim[[12]],t(runsim[[13]]))
+    return(simres)
+  }
+}
+

@@ -4,7 +4,9 @@
 \name{rara_mix10r}
 \alias{rara_mix10r}
 \title{The result of an analysis on 22 sheeps from Rasa Aragonesa population.}
-\format{the results are a zres object.}
+\format{
+the results are a zres object.
+}
 \usage{
 rara_mix10r
 }

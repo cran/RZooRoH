@@ -4,8 +4,14 @@
 \alias{rohbd}
 \title{Extracts the HBD segments from the zres object}
 \usage{
-rohbd(zres, ids = NULL, chrom = NULL, startPos = NULL,
-  endPos = NULL, inside = TRUE)
+rohbd(
+  zres,
+  ids = NULL,
+  chrom = NULL,
+  startPos = NULL,
+  endPos = NULL,
+  inside = TRUE
+)
 }
 \arguments{
 \item{zres}{The name of the zres object created by the zoorun function.}

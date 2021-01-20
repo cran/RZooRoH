@@ -4,7 +4,8 @@
 \name{BBB_PE_gt_subset}
 \alias{BBB_PE_gt_subset}
 \title{Example for "gt" format specification}
-\format{A data frame with 1,000 rows and 14 variables:
+\format{
+A data frame with 1,000 rows and 14 variables:
 \describe{
 \item{chr}{The chromosome number}
 \item{pos}{The position of the marker}
@@ -14,7 +15,8 @@
 \item{id2}{The genotypes for the second individuals (id2)}
 \item{id3, id4, id5, id6, id7, id8, id9, id10}{The genotypes of
 the remaining individuals}
-}}
+}
+}
 \usage{
 BBB_PE_gt_subset
 }

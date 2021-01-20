@@ -4,8 +4,15 @@
 \alias{probhbd}
 \title{Extracts the HBD probabilities from the zres object}
 \usage{
-probhbd(zres, zooin, id, chrom = NULL, startPos = NULL,
-  endPos = NULL, T = FALSE)
+probhbd(
+  zres,
+  zooin,
+  id,
+  chrom = NULL,
+  startPos = NULL,
+  endPos = NULL,
+  T = FALSE
+)
 }
 \arguments{
 \item{zres}{The name of the zres object created by the zoorun function.}

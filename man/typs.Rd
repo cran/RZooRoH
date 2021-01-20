@@ -4,7 +4,8 @@
 \name{typs}
 \alias{typs}
 \title{Subset of a dataset with genotypes for 6 individuals from a cattle population.}
-\format{A data frame with 6370 rows and 10 variables:
+\format{
+A data frame with 6370 rows and 10 variables:
 \describe{
 \item{chr}{The chromosome number}
 \item{pos}{The position of the marker}
@@ -16,7 +17,8 @@
 \item{id4}{The genotypes for the fourth individuals (id4)}
 \item{id5}{The genotypes for the fifth individuals (id5)}
 \item{id6}{The genotypes for the sixth individuals (id6)}
-}}
+}
+}
 \usage{
 typs
 }

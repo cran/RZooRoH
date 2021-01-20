@@ -4,14 +4,22 @@
 \alias{zoomodel}
 \title{Define the model for the RZooRoH}
 \usage{
-zoomodel(predefined = TRUE, K = 10, mix_coef = rep(0, K),
-  base_rate = 2, krates = rep(0, K), err = 0.001, seqerr = 0.001)
+zoomodel(
+  predefined = TRUE,
+  K = 10,
+  mix_coef = rep(0, K),
+  base_rate = 2,
+  krates = rep(0, K),
+  err = 0.001,
+  seqerr = 0.001,
+  layers = FALSE
+)
 }
 \arguments{
 \item{predefined}{Logical (TRUE or FALSE) to define whether rates of HBD and
 non-HBD-classes will be estimated by the model ("kr" model) or whether the
-rates of these classes are fixed and pre-defined by the user ("mixkr" model).
-The default value is "predefined = TRUE".}
+rates of these classes are fixed and pre-defined by the user ("mixkr"
+model). The default value is "predefined = TRUE".}
 
 \item{K}{The number of HBD and non-HBD classes. There are always K-1 HBD
 classes and one non-HBD class. By default, K is set to 10 but this is not
@@ -54,11 +62,11 @@ exponential distribution that together with the distance in centimorgans
 defines the probability to end a HBD segments between two markers. Each HBD
 class has a distinct rate. Therefore, the expected length of HBD classes is
 defined by the rates. The expected length if equal to 1/R. These krates are
- associated with the age of the common ancestor of the HBD segment. The rate
+associated with the age of the common ancestor of the HBD segment. The rate
 is approximately equal to the size of the inbreeding loop (twice the number
-of generations to the common ancestor) when the map is given in Morgans.
-By default, the rates are defined by the base_rate parameter
-(2, 4, 8, 16, ...).}
+of generations to the common ancestor) when the map is given in Morgans. By
+default, the rates are defined by the base_rate parameter (2, 4, 8, 16,
+...).}
 
 \item{err}{Indicates the error term, the probability to observe an
 heterozygous genotype in a HBD segment. The genotype could be heterozygous
@@ -71,23 +79,32 @@ segment. When an heterozygous genotype was called with a probability equal
 to 1.00, this heterozygosity in an HBD track might be associated to a
 mutation or to errors not accounted for by the model used to estimate the
 genotype probabilities (e.g., GATK). The emission probability to observe a
-heterozygous genotype in an HBD class will never go below the error term. The
-default value is 0.001.}
+heterozygous genotype in an HBD class will never go below the error term.
+The default value is 0.001.}
 
 \item{seqerr}{This parameters is used only with the AD format. In the AD
 format the user gives the number of reads for both alleles. A simple model
 is then used to estimate the genotype probabilities based on the read
 counts. In that model, the seqerr represents the probability to have a
 sequencing error in one read. The default value is 0.001.}
+
+\item{layers}{Logical (TRUE or FALSE) - When true, this parameter indicates
+that the data is modeled as moscaic of HBD and non-HBD classes at different
+levels. At each level, HBD and non-HBD classes have the same rate (the same
+expected length). Non-HBD classes are subsequently modelled as mosaic of
+non-HBD segments and HBD segments from more ancient generations (from
+smaller sizes). At each level, the mixing coefficients can be interpreted as
+the inbreeding coefficient at that level (false by default). This new model
+is an improvement but is still experimental and requires further testing.}
 }
 \value{
 The function return an object that defines a model for RZooRoH and
- incuding the following elements: zmodel@typeModel equal to "kr" or "mixkr"
- according to the selected model, zmodel@mix_coef an array with mixing
- coefficients, zmodel@krates an array with the rates of the HBD and non-HBD
- classes, zmodel@err the parameter defining the probability to observe an
- heterozygous genotype in an HBD class, and zmodel@seqerr the parameter
- defining the probability of sequencing error per read.
+ incuding the following elements: zmodel@typeModel equal to "kr", "mixkr" or
+ "mixkl" according to the selected model, zmodel@mix_coef an array with
+ mixing coefficients, zmodel@krates an array with the rates of the HBD and
+ non-HBD classes, zmodel@err the parameter defining the probability to
+ observe an heterozygous genotype in an HBD class, and zmodel@seqerr the
+ parameter defining the probability of sequencing error per read.
 }
 \description{
 Help the user to create a model for RZooRoH, including default parameters. The

@@ -4,9 +4,19 @@
 \alias{zooplot_partitioning}
 \title{Plot the partitioning of the genome in different HBD classes for each individual}
 \usage{
-zooplot_partitioning(input, cols = NULL, plotids = TRUE,
-  toplot = NULL, randomids = FALSE, nrandom = NULL, seed = 100,
-  ylim = c(0, 1), border = TRUE, nonhbd = TRUE, vertical = FALSE)
+zooplot_partitioning(
+  input,
+  cols = NULL,
+  plotids = TRUE,
+  toplot = NULL,
+  randomids = FALSE,
+  nrandom = NULL,
+  seed = 100,
+  ylim = c(0, 1),
+  border = TRUE,
+  nonhbd = TRUE,
+  vertical = FALSE
+)
 }
 \arguments{
 \item{input}{a named list with one or several zres objects obtained after

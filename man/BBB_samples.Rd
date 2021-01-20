@@ -4,10 +4,12 @@
 \name{BBB_samples}
 \alias{BBB_samples}
 \title{A file with names or IDs for ten samples.}
-\format{A data frame with 10 rows and one variable.
+\format{
+A data frame with 10 rows and one variable.
 \describe{
 \item{IDs}{The ids for ten individuals}
-}}
+}
+}
 \usage{
 BBB_samples
 }

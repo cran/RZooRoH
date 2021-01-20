@@ -4,8 +4,16 @@
 \alias{zoodata}
 \title{Read the genotype data file}
 \usage{
-zoodata(genofile, min_maf = 0, zformat = "gt", supcol = 5,
-  chrcol = 1, poscol = 3, allelefreq = NULL, samplefile = NA)
+zoodata(
+  genofile,
+  min_maf = 0,
+  zformat = "gt",
+  supcol = 5,
+  chrcol = 1,
+  poscol = 3,
+  allelefreq = NULL,
+  samplefile = NA
+)
 }
 \arguments{
 \item{genofile}{The name of the input data file. Note that the model is

@@ -4,10 +4,12 @@
 \name{typsfrq}
 \alias{typsfrq}
 \title{A file with marker allele frequencies for the cattle population.}
-\format{A data frame with 6370 rows and one variable.
+\format{
+A data frame with 6370 rows and one variable.
 \describe{
 \item{frq}{The allele frequencies estimated for the first allele}
-}}
+}
+}
 \usage{
 typsfrq
 }
