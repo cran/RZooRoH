@@ -6,8 +6,7 @@ integer ::i,j,k,l,io,bp,nchr,nlayer,nind,npos,n,chr,state,id,nrec,chrom,chromold
 integer ::nsim,nsnps,chr_bounds(nchr,2)
 integer ::chr_limits(nchr,4),posi(npos),genosim(nsim,npos),classes(nsim,npos)
 integer ::nF(nlayer+1),nFO(nlayer+1),Ncenso(nlayer+1)
-!integer(kind=1) ::genome(300000000)
-integer ::genome(300000000)
+integer(kind=1) ::genome(300000000)
 integer ::next_pos,current_pos,level
 real(dp) ::a,F,xran,Ft,Glen,startp,Lsim,val,gerr
 real(dp) ::freq(npos),as(nlayer),Fs(nlayer),Fsnp(nlayer+1),Fsim(nlayer+1),age(nlayer+1)
@@ -102,7 +101,7 @@ do id=1,nsim
 ! (nF(k),k=2,nlayer+1),nrec,(nFO(k),k=2,nlayer+1),&
 ! (Fsim(k),Fsnp(k),k=2,nlayer+1),(Ncenso(k),k=2,nlayer+1),(age(k),k=2,nlayer+1)
  do k=2,(nlayer+1)
-  Frealized(id,k)=Fsnp(k)
+  Frealized(id,k-1)=Fsnp(k)
  enddo
 
 enddo ! id

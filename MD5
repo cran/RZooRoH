@@ -1,4 +1,4 @@
-e8c46dff2c289c29804c96e4ba3d1859 *DESCRIPTION
+83d3e2e2719458acb5a79cded558ca1f *DESCRIPTION
 0f1e0fff3036f85f2f6f5d5d1663191a *NAMESPACE
 302518dfaa141ef7f5b1673a451b786c *R/data.R
 eb461164ea6a3bf025cb75749e9904ed *R/lib_kl.R
@@ -30,7 +30,7 @@ f2711d537d799bd1d6f698620dfa31d7 *data/wilt_mix10r.RData
 7b91a6e84dab785ec0a44246d18fb700 *inst/CITATION
 e4e3168e32756822f7398603c1d827b5 *inst/doc/zooroh-vignette.R
 4906e7546fe20ea8e48cd5c25b3bd33c *inst/doc/zooroh-vignette.Rmd
-6d15450ab754e9aad923a1bc1d6b00ff *inst/doc/zooroh-vignette.pdf
+4b231a7187c6eb481157d55066313239 *inst/doc/zooroh-vignette.pdf
 ccf009f88ff00893e8e96bf8c00bdb95 *inst/exdata/BBB_NMP_GP_subset.txt
 f7195865d31b2aa3ba16ae5c4eb42512 *inst/exdata/BBB_NMP_ad_subset.txt
 66278d9dd795a9cccbd587b63399e145 *inst/exdata/BBB_NMP_pl_subset.txt
@@ -70,7 +70,7 @@ b48c961e03c1ec827b140bc72db1e642 *man/zooplot_prophbd.Rd
 a5c231ccb60f296026e4b9dcfc2bb33c *src/RZooRoH_init.c
 a9c56bae51e148db931d2696b9c9a1b3 *src/zooEM.f90
 ec73d16f36d932d085f1e6d8ebc5b1b9 *src/zooFB.f90
-2c1d065eebc2bffe25a6b2379e15b3f9 *src/zooSIM.f90
+803e757a77e54193bbbd126e6a2a3cbc *src/zooSIM.f90
 e7a7406db9b3530ab39f6d414ee48f53 *src/zooViterbi.f90
 d0a83eb060105710130f7967915f9ab1 *src/zoolayerEM.f90
 67a86e6256fb17a1d6d9b1a43477eb17 *src/zoolayerFB.f90
