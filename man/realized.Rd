@@ -9,17 +9,20 @@ realized(zres, classNum = NULL)
 \arguments{
 \item{zres}{The name of the zres object created by the zoorun function.}
 
-\item{classNum}{An array with the number of the classes to extract. All classes
-are extracted by default.}
+\item{classNum}{An array with the number of the classes to extract. All
+classes are extracted by default.}
 }
 \value{
-The function returns a data frame with one row per individual and one column
-per extracted classes. In addition, it gives names to the columns. For a pre-defined
- model, the names of HBD classes are "R_X" where X is the rate of the corresponding
-class. For a model with rate estimation, the names of the HBD classes are
-"HBDclassX" where X is the number of the HBD class. For non-HBD classes, we use "NonHBD".
+The function returns a data frame with one row per individual and one
+ column per extracted classes. In addition, it gives names to the columns.
+ For a pre-defined model, the names of HBD classes are "R_X" where X is the
+ rate of the corresponding class. For a model with rate estimation, the names
+ of the HBD classes are "HBDclassX" where X is the number of the HBD class.
+ For non-HBD classes, we use "NonHBD".
 }
 \description{
-Extracts the realized autozygosity from the zres object. Extraction is performed
-for the indicated classes (all by default) and names are added to the columns.
+Extracts the realized autozygosity from the zres object. Extraction is
+performed for the indicated classes (all by default) and names are added to
+the columns. The function must be used with more than one individual is the
+zres object.
 }

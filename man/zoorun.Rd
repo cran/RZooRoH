@@ -39,7 +39,7 @@ with the L-BFGS-B method from the optim function (option method="opti",
 default value) or with the EM-algorithm (option method="estem"). When the EM
 algorithm is used, the Forward-Backward algorithm is run automatically (no
 need to select the fb option - see below). We recommend to set minr to 1
-when using the EM algorithm. If the user don't want to estimate the
+when using the EM algorithm. If the user doesn't want to estimate the
 parameters he must set method="no".}
 
 \item{fb}{A logical indicating whether the forward-backward algorithm is run
@@ -119,8 +119,8 @@ individuals,
  the Forward-Backward algorithm - fb option),
  \item zoores@hbdp a list of matrices with the
  local probabilities to belong to an underlying hidden state (computed for
- every class and every individual). Each matrix has one row per snp and
- one column per class. To access the matrix from individual i, use the
+ every class and every individual). Each matrix has one row per class and
+ one column per snp. To access the matrix from individual i, use the
  brackets "[[]]", for instance zoores@hbdp[[i]],
  \item zoores@hbdseg a data frame with the list
  of identified HBD segments with the Viterbi algorithm (the columns are the

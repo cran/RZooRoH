@@ -1,18 +1,21 @@
 #'Extracts the realized autozygosity from the zres object
 #'
-#'Extracts the realized autozygosity from the zres object. Extraction is performed
-#'for the indicated classes (all by default) and names are added to the columns.
+#'Extracts the realized autozygosity from the zres object. Extraction is
+#'performed for the indicated classes (all by default) and names are added to
+#'the columns. The function must be used with more than one individual is the
+#'zres object.
 #'
 #'@param zres The name of the zres object created by the zoorun function.
 #'
-#'@param classNum An array with the number of the classes to extract. All classes
-#'are extracted by default.
+#'@param classNum An array with the number of the classes to extract. All
+#'  classes are extracted by default.
 #'
-#'@return The function returns a data frame with one row per individual and one column
-#' per extracted classes. In addition, it gives names to the columns. For a pre-defined
-#'  model, the names of HBD classes are "R_X" where X is the rate of the corresponding
-#' class. For a model with rate estimation, the names of the HBD classes are
-#' "HBDclassX" where X is the number of the HBD class. For non-HBD classes, we use "NonHBD".
+#'@return The function returns a data frame with one row per individual and one
+#'  column per extracted classes. In addition, it gives names to the columns.
+#'  For a pre-defined model, the names of HBD classes are "R_X" where X is the
+#'  rate of the corresponding class. For a model with rate estimation, the names
+#'  of the HBD classes are "HBDclassX" where X is the number of the HBD class.
+#'  For non-HBD classes, we use "NonHBD".
 #'
 #'@export
 
@@ -140,7 +143,8 @@ rohbd <- function(zres, ids = NULL, chrom = NULL, startPos = NULL, endPos = NULL
 #'Extracts the HBD probabilities from the zres object
 #'
 #'Extracts the locus specific HBD probabilities for an individual. A specific chromosomal region can be specified.
-#'A threshold T can be used to determine which HBD classes are used in the computation of the HBD probability.
+#'A threshold T can be used to determine which HBD classes are used in the computation of the HBD probability. This
+#'function requires that the option "localhbd" was set to TRUE when creating the zres object.
 #'
 #'@param zres The name of the zres object created by the zoorun function.
 #'

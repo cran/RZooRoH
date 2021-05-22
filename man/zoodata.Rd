@@ -35,7 +35,7 @@ with tools such as PLINK or vcftools.}
  ordered per rows and individuals per columns. Variants should be ordered by
  chromosome and position. By default, the first five columns are chromosome
  identification (e.g, "1", "chr1"), the name of the marker, the position of
- the marker in base pairs or better in cM divided 1000000 when genetic
+ the marker in base pairs or better in cM multiplied by 1,000,000 when genetic
  distances are known, the first marker allele and the second marker allele.
  Information per individual varies according to the format. With the "gt"
  format we have one column per individual with 0, 1 and 2 indicating the

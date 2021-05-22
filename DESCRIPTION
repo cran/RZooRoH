@@ -2,7 +2,7 @@ Package: RZooRoH
 Type: Package
 Title: Partitioning of Individual Autozygosity into Multiple
         Homozygous-by-Descent Classes
-Version: 0.3.0
+Version: 0.3.1
 Author: Tom Druet, Naveen Kumar Kadri, Amandine Bertrand and Mathieu Gautier
 Maintainer: Tom Druet <tom.druet@uliege.be>
 Description: Functions to identify Homozygous-by-Descent (HBD) segments associated with runs of homozygosity (ROH) and to
@@ -23,6 +23,6 @@ RoxygenNote: 7.1.1
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2021-01-22 07:06:22 UTC; Tom
+Packaged: 2021-05-22 18:19:44 UTC; Tom
 Repository: CRAN
-Date/Publication: 2021-01-22 22:20:08 UTC
+Date/Publication: 2021-05-22 19:00:03 UTC

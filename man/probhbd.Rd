@@ -43,5 +43,6 @@ the threshold (the sum from all the HBD classes when T is not specified).
 }
 \description{
 Extracts the locus specific HBD probabilities for an individual. A specific chromosomal region can be specified.
-A threshold T can be used to determine which HBD classes are used in the computation of the HBD probability.
+A threshold T can be used to determine which HBD classes are used in the computation of the HBD probability. This
+function requires that the option "localhbd" was set to TRUE when creating the zres object.
 }

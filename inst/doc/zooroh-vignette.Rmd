@@ -44,7 +44,7 @@ To cite the RZooRoH package in publication, please use:
 
 * T. Druet and M. Gautier (2017). A model-based approach to characterize individual inbreeding at both global and local genomic scales. Molecular Ecology, 26:5820-5841 (https://doi.org/10.1111/mec.14324).
 
-* A.R. Bertrand, N.K. Kadri, L. Flori, M. Gautier and T. Druet (2019). RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments. Methods in Ecology and Evolution (https://doi.org/10.1111/2041-210X.13167).
+* A.R. Bertrand, N.K. Kadri, L. Flori, M. Gautier and T. Druet (2019). RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments. Methods Ecol Evol, 10:860–866 (https://doi.org/10.1111/2041-210X.13167).
 
 ## 3 The multiple HBD classes model
 
@@ -431,33 +431,33 @@ mix10R@krates
 To define a model with pre-defined rates for 5 classes (4 HBD and 1 non-HBD class) with a ratio between successive rates of ten:
 \newline
 ```{r}
-mix5R <- zoomodel(K=5,base=10)
+mix5R <- zoomodel(K=5,base=10,layers=FALSE)
 mix5R
 ```
 To define the same model but setting genotyping error rates to 0.01 and sequencing error rates to 0.005:
 \newline
 ```{r}
-mix5R <- zoomodel(K=5,base=10,err=0.01,seqerr=0.005)
+mix5R <- zoomodel(K=5,base=10,err=0.01,seqerr=0.005,layers=FALSE)
 mix5R@err
 mix5R@seqerr
 ```
 To define a model with four classes, with estimation of the rates and specifying the initial rates to 16, 64, 256 and 256:
 \newline
 ```{r}
-my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256))
+my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256),layers=FALSE)
 my.mod4R
 ```
 To change the starting values of the mixing coefficients:
 \newline
 ```{r}
 my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256),
-                     mix_coef=c(0.03,0.04,0.13,0.80))
+                     mix_coef=c(0.03,0.04,0.13,0.80),layers=FALSE)
 my.mod4R@mix_coef
 ```
 Finally, to define a model with one HBD-class and common rate for the HBD and non-HBD classes (similar to the original model from Leutenegger et al. [-@leutenegger2003]):
 \newline
 ```{r}
-my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
+my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10),layers=FALSE)
 my.mod1R
 ```
 
@@ -548,7 +548,7 @@ bbb_results3 <- zoorun(my.mod1R, bbb, localhbd = TRUE)
 To run a model with two HBD classes with pre-defined rates equal to 10 and 100 on the same data set.
 \newline
 ```{r}
-Mod3R <- zoomodel(K=3,base_rate=10)
+Mod3R <- zoomodel(K=3,base_rate=10,layers=FALSE)
 bbb_mod3r <- zoorun(Mod3R, bbb, localhbd = TRUE)
 ```
 

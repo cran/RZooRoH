@@ -37,7 +37,7 @@ is.zmodel <- function (x)
 #'  alone), these are the mixing coefficients used by the RZooRoH model.
 #'
 #'@param base_rate is a integer used to define the rates of successive HBD
-#'  classes (see krates below). This parameter is most usefull when using a
+#'  classes (see krates below). This parameter is most useful when using a
 #'  mixkr model with predefined rates. The rate of each HBD class will be equal
 #'  to the base_rate raised to the exponent k (the class number). The non-HBD
 #'  class will have the same rate as the last HBD class. For instance, with a
@@ -88,13 +88,13 @@ is.zmodel <- function (x)
 #'  sequencing error in one read. The default value is 0.001.
 #'
 #'@param layers Logical (TRUE or FALSE) - When true, this parameter indicates
-#'  that the data is modeled as moscaic of HBD and non-HBD classes at different
+#'  that the data is modeled as mosaic of HBD and non-HBD classes at different
 #'  levels. At each level, HBD and non-HBD classes have the same rate (the same
 #'  expected length). Non-HBD classes are subsequently modelled as mosaic of
 #'  non-HBD segments and HBD segments from more ancient generations (from
 #'  smaller sizes). At each level, the mixing coefficients can be interpreted as
-#'  the inbreeding coefficient at that level (false by default). This new model
-#'  is an improvement but is still experimental and requires further testing.
+#'  the inbreeding coefficient at that level (TRUE by default). This model corresponds
+#'  to the Nested 1R model (N1R).
 #'
 #'@return The function return an object that defines a model for RZooRoH and
 #'  incuding the following elements: zmodel@@typeModel equal to "kr", "mixkr" or
@@ -134,7 +134,7 @@ is.zmodel <- function (x)
 #'@export
 
 zoomodel <- function(predefined = TRUE, K = 10, mix_coef = rep(0, K), base_rate = 2,
-                         krates = rep(0, K), err = 0.001, seqerr = 0.001, layers = FALSE) {
+                         krates = rep(0, K), err = 0.001, seqerr = 0.001, layers = TRUE) {
   mymod <- new("zmodel")
   mymod@typeModel = "kr"
   if(predefined){mymod@typeModel = "mixkr"}

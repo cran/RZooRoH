@@ -5,7 +5,7 @@ library(RZooRoH)
 context("Running")
 
 test_that("Running one BBB with 1R model ...",{
-  my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
+  my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10),layers=FALSE)
   freqfile <- (system.file("exdata","typsfrq.txt",package="RZooRoH"))
   typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
   frq <- read.table(freqfile,header=FALSE)
@@ -19,7 +19,7 @@ test_that("Running one BBB with 1R model ...",{
 })
 
 test_that("Running two BBB with 1R model and EM algorithm ...",{
-  my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
+  my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10),layers=FALSE)
   freqfile <- (system.file("exdata","typsfrq.txt",package="RZooRoH"))
   typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
   frq <- read.table(freqfile,header=FALSE)
@@ -34,7 +34,7 @@ test_that("Running two BBB with 1R model and EM algorithm ...",{
 })
 
 test_that("Running with local HBD probabilities ...",{
-  my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
+  my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10),layers=FALSE)
   freqfile <- (system.file("exdata","typsfrq.txt",package="RZooRoH"))
   typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
   frq <- read.table(freqfile,header=FALSE)
@@ -57,7 +57,7 @@ test_that("Running with MixKR model ...",{
   typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
   frq <- read.table(freqfile,header=FALSE)
   bbb <- zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
-  Mod3R <- zoomodel(K=3,base_rate=10)
+  Mod3R <- zoomodel(K=3,base_rate=10,layers=FALSE)
   bbb_mod3r <- zoorun(Mod3R, bbb, localhbd = TRUE)
   expect_equal(round(bbb_mod3r@modlik[1],1),-6128.1)
   expect_equal(round(bbb_mod3r@realized[6,1],3),0.100)

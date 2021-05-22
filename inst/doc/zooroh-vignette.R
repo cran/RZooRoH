@@ -83,25 +83,25 @@ mix10R
 mix10R@krates
 
 ## -----------------------------------------------------------------------------
-mix5R <- zoomodel(K=5,base=10)
+mix5R <- zoomodel(K=5,base=10,layers=FALSE)
 mix5R
 
 ## -----------------------------------------------------------------------------
-mix5R <- zoomodel(K=5,base=10,err=0.01,seqerr=0.005)
+mix5R <- zoomodel(K=5,base=10,err=0.01,seqerr=0.005,layers=FALSE)
 mix5R@err
 mix5R@seqerr
 
 ## -----------------------------------------------------------------------------
-my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256))
+my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256),layers=FALSE)
 my.mod4R
 
 ## -----------------------------------------------------------------------------
 my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256),
-                     mix_coef=c(0.03,0.04,0.13,0.80))
+                     mix_coef=c(0.03,0.04,0.13,0.80),layers=FALSE)
 my.mod4R@mix_coef
 
 ## -----------------------------------------------------------------------------
-my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
+my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10),layers=FALSE)
 my.mod1R
 
 ## -----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ bbb_results2 <- zoorun(my.mod1R, bbb, method="estem",ids = c(1,2), convem=1e-12,
 bbb_results3 <- zoorun(my.mod1R, bbb, localhbd = TRUE)
 
 ## -----------------------------------------------------------------------------
-Mod3R <- zoomodel(K=3,base_rate=10)
+Mod3R <- zoomodel(K=3,base_rate=10,layers=FALSE)
 bbb_mod3r <- zoorun(Mod3R, bbb, localhbd = TRUE)
 
 ## -----------------------------------------------------------------------------
