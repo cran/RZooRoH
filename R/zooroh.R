@@ -98,8 +98,8 @@
 #'@import graphics
 #'@import stats
 #'@import utils
-#'@docType package
-#'@name RZooRoH
+#'@keywords internal
+"_PACKAGE"
 NULL
 
 setClass(Class = "zres",
@@ -475,8 +475,8 @@ run_mixkr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = F
 
   ##### renvoie toujours les paramètres
   zresu <- new("oneres")
-  loglik <- NA
-  bicv <- NA
+  loglik <- 0
+  bicv <- 0
   zrates <- round(zrates,3)
   if(opti){
     if(.GlobalEnv$checkoptim == 1){
@@ -597,8 +597,8 @@ run_kr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALS
 
   ##### renvoie toujours les paramètres
   zresu <- new("oneres")
-  loglik <- NA
-  bicv <- NA
+  loglik <- 0
+  bicv <- 0
   zrates <- round(zrates,3)
   if(opti){
     if (.GlobalEnv$checkoptim == 1){
@@ -690,8 +690,8 @@ run_mixkl <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = F
 
   ##### renvoie toujours les paramètres
   zresu <- new("oneres")
-  loglik <- NA
-  bicv <- NA
+  loglik <- 0
+  bicv <- 0
   zrates <- round(zrates,3)
   if(opti){
     if(.GlobalEnv$checkoptim == 1){
@@ -818,8 +818,8 @@ run_kl <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALS
 
   ##### renvoie toujours les paramètres
   zresu <- new("oneres")
-  loglik <- NA
-  bicv <- NA
+  loglik <- 0
+  bicv <- 0
   zrates <- round(zrates,3)
   if(opti){
     if (.GlobalEnv$checkoptim == 1){

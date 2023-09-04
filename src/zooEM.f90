@@ -17,7 +17,7 @@ real(dp) ::global(nclust),fromi(nclust),ini(nclust),mux(nclust),EL(nclust)
 do iter=1,niter
 
 alpha=0.d0;beta=0.d0;gamma=0.d0;scaling=0.d0;pinit=Fs
-loglik=0.d0;num_pi=0.d0;global=0.d0;EL=0.d0
+loglik=0.d0;loglik0=0.d0;num_pi=0.d0;global=0.d0;EL=0.d0
 IT=1;isF=1;isF(nclust)=0
 
 !############ FORWARD ALGORITHM ####################
@@ -39,7 +39,7 @@ enddo
 ! induction: to get to i, two ways:
 ! 1) transition + jump into cluster i
 ! 2) no transition and in i at previous position
- 
+
  do k=fpos+1,lpos
   trans=TM(nclust,IT,as,Fs,k,npos,posi)
   do i=1,nclust
@@ -52,7 +52,7 @@ enddo
   enddo
  scaling(k)=1.0/scaling(k)
  alpha(:,k)=alpha(:,k)*scaling(k)
- enddo  
+ enddo
 
 
 !############ BACKWARD ALGORITHM ####################
@@ -75,7 +75,7 @@ do k=lpos-1,fpos,-1
     beta(i,k)=beta(i,k)+trans(i,j)*pemission(k+1,isF(j)+1)*beta(j,k+1)
   enddo
   beta(i,k)=beta(i,k)*scaling(k)
-  gamma(i,k)=alpha(i,k)*beta(i,k)/scaling(k)  
+  gamma(i,k)=alpha(i,k)*beta(i,k)/scaling(k)
  enddo
 enddo
 
@@ -86,7 +86,7 @@ enddo
 ! termination
 
  loglik=loglik-sum(log(scaling(fpos:lpos)))
- 
+
 !########## estimation transitions #############
 
 do i=1,nclust

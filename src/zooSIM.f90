@@ -6,20 +6,13 @@ integer ::i,j,k,l,io,bp,nchr,nlayer,nind,npos,n,chr,state,id,nrec,chrom,chromold
 integer ::nsim,nsnps,chr_bounds(nchr,2)
 integer ::chr_limits(nchr,4),posi(npos),genosim(nsim,npos),classes(nsim,npos)
 integer ::nF(nlayer+1),nFO(nlayer+1),Ncenso(nlayer+1)
-integer(kind=1) ::genome(300000000)
-integer ::next_pos,current_pos,level
-real(dp) ::a,F,xran,Ft,Glen,startp,Lsim,val,gerr
+integer(k1) ::genome(300000000),level
+integer ::next_pos,current_pos
+real(dp) ::a,F,xran,Ft,Glen,startp,Lsim,val,gerr,expornd
 real(dp) ::freq(npos),as(nlayer),Fs(nlayer),Fsnp(nlayer+1),Fsim(nlayer+1),age(nlayer+1)
 real(dp) ::Frealized(nsim,nlayer)
-character*10 ::all1,all2
-character*20 ::mname
 
-call init_random_seed()
-!call random_seed()
-
-!open(12,file='geno_sim.txt',status='replace')
-!open(13,file='siminfo.txt',status='replace')
-!open(14,file='states_sim.txt',status='replace')
+call rndstart()
 
 do chrom=1,nchr
  chr_limits(chrom,3)=chr_bounds(chrom,1)
@@ -46,7 +39,7 @@ do id=1,nsim
    next_pos=0;current_pos=0
    do while (next_pos < chr_limits(chr,2))
     call sample_state
-    xran=random_exponential()
+    xran=expornd()
     next_pos=current_pos+floor(100000000.d0*xran/a)
     if(next_pos > chr_limits(chr,2))next_pos=chr_limits(chr,2)
     if(state==1)then
@@ -74,9 +67,9 @@ do id=1,nsim
   do k=chr_limits(chr,3),chr_limits(chr,4)
    state=abs(genome(posi(k)))
    Fsnp(state)=Fsnp(state)+1.d0
-   if(k==chr_limits(chr,3))nFO(state)=nFO(state)+1.d0
+   if(k==chr_limits(chr,3))nFO(state)=nFO(state)+1
    if(k>chr_limits(chr,3))then
-    if(state/=abs(genome(posi(k-1))))nFO(state)=nFO(state)+1.d0
+    if(state/=abs(genome(posi(k-1))))nFO(state)=nFO(state)+1
    endif
    classes(id,k)=state
    if(state==1)then
@@ -96,44 +89,21 @@ do id=1,nsim
  enddo
  nrec=sum(nF)
 
-!! write(13,'(i3,<2*nlayer+1>(1x,i6),<2*nlayer>(1x,f9.6),<nlayer>(1x,i6),<nlayer>(1x,f9.2))')id,&
-! write(13,*)id,&
-! (nF(k),k=2,nlayer+1),nrec,(nFO(k),k=2,nlayer+1),&
-! (Fsim(k),Fsnp(k),k=2,nlayer+1),(Ncenso(k),k=2,nlayer+1),(age(k),k=2,nlayer+1)
  do k=2,(nlayer+1)
   Frealized(id,k-1)=Fsnp(k)
  enddo
 
 enddo ! id
 
-all1='all1';all2='all2'
-
-!k=0
-!do chr=1,nchr
-! do k=chr_limits(chr,3),chr_limits(chr,4)
-!  bp=posi(k)
-!    write(12,'(i2,1x,i10,2(1x,a4))',advance='no')chr,bp,all1,all2
-!    write(14,'(i2,1x,i10,2(1x,a4))',advance='no')chr,bp,all1,all2
-!    do id=1,nsim-1
-!      write(12,'(1x,i1)',advance='no')genosim(id,k)
-!      write(14,'(1x,i2)',advance='no')classes(id,k)
-!    enddo
-!    write(12,'(1x,i1)')genosim(nsim,k)
-!    write(14,'(1x,i2)')classes(nsim,k)
-! enddo
-!enddo
-
-! close(12)
-! close(13)
-! close(14)
+call rndend()
 
 contains
 
 subroutine sample_state
 implicit none
-real(dp) ::ran1
+real(dp) ::ran1,unifrnd
 
-call random_number(ran1)
+ran1 = unifrnd()
 if(ran1 < F)then
   state=1
 else
@@ -145,9 +115,9 @@ end subroutine
 subroutine sample_geno(hs,marker,indiv)
 implicit none
 integer ::hs,marker,indiv
-real(dp) ::ran1
+real(dp) ::ran1,unifrnd
 
-call random_number(ran1)
+ran1 = unifrnd()
 if(hs==1)then
  if(ran1 < freq(marker))then
   genosim(indiv,marker)=2
@@ -164,7 +134,7 @@ else if(hs==2)then
  endif
 endif
 
-call random_number(ran1)
+ran1 = unifrnd()
 if(ran1 <= 0.00000)then
  if(ran1 <= 0.00000)then
   if(genosim(indiv,marker)==0)then
@@ -186,49 +156,5 @@ if(ran1 <= 0.00000)then
 endif
 
 end subroutine
-
-   SUBROUTINE init_random_seed()
-     INTEGER :: i, n, clock
-     INTEGER, DIMENSION(:), ALLOCATABLE :: seed
-
-     CALL RANDOM_SEED(size = n)
-     ALLOCATE(seed(n))
-
-     CALL SYSTEM_CLOCK(COUNT=clock)
-
-     seed = clock + 37 * (/ (i - 1, i = 1, n) /)
-     CALL RANDOM_SEED(PUT = seed)
-
-     DEALLOCATE(seed)
-   END SUBROUTINE init_random_seed
-
-
-FUNCTION random_exponential() RESULT(fn_val)
-
-! copied from the random.f90 module
-! Adapted from Fortran 77 code from the book:
-!     Dagpunar, J. 'Principles of random variate generation'
-!     Clarendon Press, Oxford, 1988.   ISBN 0-19-852202-9
-
-! FUNCTION GENERATES A RANDOM VARIATE IN [0,INFINITY) FROM
-! A NEGATIVE EXPONENTIAL DlSTRIBUTION WlTH DENSITY PROPORTIONAL
-! TO EXP(-random_exponential), USING INVERSION.
-
-REAL  :: fn_val
-
-!     Local variable
-REAL  :: r
-
-DO
-  CALL RANDOM_NUMBER(r)
-!  IF (r > zero) EXIT
-   IF (r > 0.d0) EXIT
-END DO
-
-fn_val = -LOG(r)
-RETURN
-
-END FUNCTION random_exponential
-
 
 end subroutine
