@@ -494,6 +494,7 @@ run_mixkr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = F
     zresu@realized <- outem[[4]]
     if(localhbd){zresu@hbdp <- outem[[6]]}
   }
+  if(!estem & !opti){.GlobalEnv$niter <- 0}
 
   zresu@mixc <- zmix
   zresu@krates <- zrates
@@ -623,6 +624,8 @@ run_kr <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALS
     if(localhbd){zresu@hbdp <- outem[[6]]}
   }
 
+  if(!estem & !opti){.GlobalEnv$niter <- 0}
+
   zresu@mixc <- zmix
   zresu@krates <- zrates
   zresu@modlik <- loglik
@@ -709,6 +712,8 @@ run_mixkl <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = F
     zresu@realized <- outem[[4]]
     if(localhbd){zresu@hbdp <- outem[[6]]}
   }
+
+  if(!estem & !opti){.GlobalEnv$niter <- 0}
 
   zresu@mixc <- zmix
   zresu@krates <- zrates
@@ -843,6 +848,8 @@ run_kl <- function(zooin,id, zrates, zmix, opti = TRUE, estem = FALSE, fb = FALS
 #    zresu@realized <- outem[[4]]
 #    if(localhbd){zresu@hbdp <- outem[[6]]}
 #  }
+
+  if(!estem & !opti){.GlobalEnv$niter <- 0}
 
   zresu@mixc <- zmix
   zresu@krates <- zrates

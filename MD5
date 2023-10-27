@@ -1,4 +1,4 @@
-90335e42e5eea38356ad570264f9d4e9 *DESCRIPTION
+e36146e3005f23eaec0223fcfe699837 *DESCRIPTION
 0f1e0fff3036f85f2f6f5d5d1663191a *NAMESPACE
 302518dfaa141ef7f5b1673a451b786c *R/data.R
 eb461164ea6a3bf025cb75749e9904ed *R/lib_kl.R
@@ -8,13 +8,13 @@ acd7b095b3468c37f4ad05ff018c67ec *R/lib_mixkr.R
 8fc0ce871e6ad58369a22a66cefc1a96 *R/prob_emission.R
 121616df0bddbf6b32c894cfe1bedfe3 *R/read_zdata.R
 a92017dec9ff53544e5945f3700fce82 *R/zooplot_segments.R
-c488b8ac4503f02be2ba413a74680ad3 *R/zooroh.R
+4abc48839e91488c00e3cbaff8b769cf *R/zooroh.R
 9d7acd9e3d5010210600f2b49c36766c *R/zooroh_accessor.R
 8fb38284226433a5b0793b2646b2fc42 *R/zooroh_model.R
 c2b671a5f60c578a50887e04a5ae954a *R/zplot_individual.R
 7832ddbaba59c987dc2beb4838a32b52 *R/zplot_prophbd.R
 9741df12ca0cdc9d0f601e19a5f0c047 *R/zplot_vertical.R
-6738ae560aaf3402a88115d529efd94e *build/vignette.rds
+978697cc28c5c67556cd7677f0335607 *build/vignette.rds
 d4da291bc18ea28292daf78aea66b39d *data/BBB_NMP_GP_subset.RData
 a558e5b3d0fd40d0a3a58cf469da5ef4 *data/BBB_NMP_ad_subset.RData
 3120d1696f9d568980628a6613017614 *data/BBB_NMP_pl_subset.RData
@@ -30,7 +30,7 @@ f2711d537d799bd1d6f698620dfa31d7 *data/wilt_mix10r.RData
 964a7f6c913bb45ef458c349cf2301fd *inst/CITATION
 cc31b6de1cf6fa790424ff1ef401fba4 *inst/doc/zooroh-vignette.R
 eead49e85fbaa0fb69ab4a5dc63201f5 *inst/doc/zooroh-vignette.Rmd
-4f51beb1e124892535187c3ad6cf28cf *inst/doc/zooroh-vignette.pdf
+bdec2ea42494e183f799d4953f049a3a *inst/doc/zooroh-vignette.pdf
 ccf009f88ff00893e8e96bf8c00bdb95 *inst/exdata/BBB_NMP_GP_subset.txt
 f7195865d31b2aa3ba16ae5c4eb42512 *inst/exdata/BBB_NMP_ad_subset.txt
 66278d9dd795a9cccbd587b63399e145 *inst/exdata/BBB_NMP_pl_subset.txt
