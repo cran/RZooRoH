@@ -73,7 +73,7 @@ zooplot_prophbd <- function (input,  cols=NULL, style="barplot", cumulative = FA
     myids <- input [[i]]@sampleids
     myres <- data.frame (id=myids, myres)
     means [[i]] <- apply (myres[, -1], 2, mean)
-    ks [i] <- ncol (input [[1]]@krates)
+    ks [i] <- ncol (input [[1]]@krates) + 1
 
     myres$pop <- i #if ind.results are used
     if (i ==1) {

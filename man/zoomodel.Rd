@@ -12,59 +12,67 @@ zoomodel(
   krates = rep(0, K),
   err = 0.001,
   seqerr = 0.001,
-  layers = TRUE
+  step = FALSE,
+  XM = rep(0, K),
+  HBDclass = "SingleRate"
 )
 }
 \arguments{
 \item{predefined}{Logical (TRUE or FALSE) to define whether rates of HBD and
-non-HBD-classes will be estimated by the model ("kr" model) or whether the
-rates of these classes are fixed and pre-defined by the user ("mixkr"
+non-HBD-classes will be estimated by the model ("kl" model) or whether the
+rates of these classes are fixed and pre-defined by the user ("mixkl"
 model). The default value is "predefined = TRUE".}
 
-\item{K}{The number of HBD and non-HBD classes. There are always K-1 HBD
-classes and one non-HBD class. By default, K is set to 10 but this is not
-optimal for all data sets. Hence, we recommend to the users to select their
-own value. If K is set to 2 and rates are estimated, RZooRoH will use the
-same rate for the HBD and the non-HBD class (so-called 1R model).}
+\item{K}{The number of layers with the nested 1R model implemented in 2022,
+this represents thus the number of HBD classes. By default, K is set to 10
+but this is not optimal for all data sets. Hence, we recommend to the users
+to select their own value. If K is set to 1 and rates are estimated, RZooRoH
+will use the same rate for the HBD and the non-HBD class (so-called 1R
+model).}
 
-\item{mix_coef}{The starting value for the mixing coefficients for all HBD and
-non-HBD classes. The mixing coefficients determine the frequency of the
-segments from different classes, they determine the probability to start a
-new segment in a given class when a segment ends. The mixing coefficients
-should sum to 1 and the function expects K mixing coefficients. The default
-values are 0.01 for HBD classes and the value for the non-HBD class is such
-that all mixing coefficients sum to 1. In case the parameters are not
-estimated (e.g. when running the forward-backward or the Viterbi algorithm
-alone), these are the mixing coefficients used by the RZooRoH model.}
+\item{mix_coef}{The starting value for the mixing coefficients in each layer.
+The mixing coefficients determine the frequency of the segments from
+different classes, they determine the probability to start a new HBD segment
+in a given layer (after reaching that layer after a coancestry change). The
+mixing coefficients can also be interpreted as the rate of inbreeding in
+their respective layer and should take values between 0 and 1. The function
+expects K mixing coefficients (e.g. the number of layers). The default
+values are 0.01 for HBD classes (smaller values may be better for large
+values of K). In case the parameters are not estimated (e.g. when running
+the forward-backward or the Viterbi algorithm alone), these are the mixing
+coefficients used by the RZooRoH model. Is it possible to force some mixing
+coefficient to take the same value with the step option. In that case,
+the expected number of mixing coefficients might be different.}
 
-\item{base_rate}{is a integer used to define the rates of successive HBD
-classes (see krates below). This parameter is most useful when using a
-mixkr model with predefined rates. The rate of each HBD class will be equal
-to the base_rate raised to the exponent k (the class number). The non-HBD
-class will have the same rate as the last HBD class. For instance, with a
-base_rate of 2 and five classes, we have the following rates: 2, 4, 8, 16
-and 16. Similarly, with a base_rate of 10 and four classes, we have 10, 100,
+\item{base_rate}{is a integer used to define the rates of successive layers or
+HBD classes (see krates below). This parameter is most useful when using a
+model with predefined rates. The rate of each HBD class will be equal to the
+base_rate raised to the exponent k (the class number). The non-HBD class
+will have the same rate as the last HBD class. For instance, with a
+base_rate of 2 and four layers, we have the following rates: 2, 4, 8, 16 and
+16. Similarly, with a base_rate of 10 and three layers, we have 10, 100,
 1000 and 1000. With this method, more HBD classes are defined for more
 recent ancestors (for which we have more information to estimate R) and less
 for ancient HBD classes (it doesn't make sense to try to distinguish R =
 1000 from R = 1010). In addition, since the expected length of HBD segments
-is expected to be approximately 1/R, the ratio between successive expected
-HBD lengths remains the same. This ratio also determines the ability of the
-model to distinguish segments from distinct classes. By keeping the ratio
-constant, the aptitude to discriminate between HBD classes is also constant.
-In addition, this method allows to cover a wide range of generations in the
+is expected to be 1/R, the ratio between successive expected HBD lengths
+remains the same. This ratio also determines the ability of the model to
+distinguish segments from distinct classes. By keeping the ratio constant,
+the aptitude to discriminate between HBD classes is also constant. In
+addition, this method allows to cover a wide range of generations in the
 past, with more emphasis on recent ancestors. The default value for the
 base_rate is 2.}
 
-\item{krates}{Is an array with a rate for each HBD and non-HBD class. The
-function expects K positive rates. These rates are parameters of the
-exponential distribution that together with the distance in centimorgans
-defines the probability to end a HBD segments between two markers. Each HBD
-class has a distinct rate. Therefore, the expected length of HBD classes is
-defined by the rates. The expected length if equal to 1/R. These krates are
-associated with the age of the common ancestor of the HBD segment. The rate
-is approximately equal to the size of the inbreeding loop (twice the number
-of generations to the common ancestor) when the map is given in Morgans. By
+\item{krates}{Is an array with a rate in each layer. The function expects K
+positive rates. These rates are parameters of the exponential distribution
+that together with the distance in centimorgans defines the probability to
+end a HBD segments between two markers. Each layer / HBD class has a
+distinct rate. Therefore, the expected length of HBD classes is defined by
+the rates. The expected length is equal to 1/R. These krates are associated
+with the age of the common ancestor of the HBD segment. The rate is
+approximately equal to the size of the inbreeding loop (twice the number of
+generations to the common ancestor) when the map is given in Morgans. This
+is not an exact dating but an approximation, in simplified conditions. By
 default, the rates are defined by the base_rate parameter (2, 4, 8, 16,
 ...).}
 
@@ -88,23 +96,51 @@ is then used to estimate the genotype probabilities based on the read
 counts. In that model, the seqerr represents the probability to have a
 sequencing error in one read. The default value is 0.001.}
 
-\item{layers}{Logical (TRUE or FALSE) - When true, this parameter indicates
-that the data is modeled as mosaic of HBD and non-HBD classes at different
-levels. At each level, HBD and non-HBD classes have the same rate (the same
-expected length). Non-HBD classes are subsequently modelled as mosaic of
-non-HBD segments and HBD segments from more ancient generations (from
-smaller sizes). At each level, the mixing coefficients can be interpreted as
-the inbreeding coefficient at that level (TRUE by default). This model corresponds
-to the Nested 1R model (N1R).}
+\item{step}{Logical (TRUE or FALSE). This allows to use a step function to
+model the mixing coefficients. First a model with many layers is defined.
+For example, one layer for each even number (50 layers from 2 to 100 for
+example). Although such a model allows a finer resolution, it requires the
+estimation of many parameters (probably without enough information to
+estimate precisely all mixing coefficients). Therefore, we propose a
+stepfunction that forces mixing coefficients to be constant for several
+consecutive layers (by blocks of layers). When this option is used, K
+represents the total number of fitted layers, all their rates must be
+defined. Regarding the mixing coefficients, one mixing coefficient must be
+defined per step (block). An incidence matrix relating the full set of
+mixing coefficients from HBD classes from all layers to the steps or blocks
+must be provided.}
+
+\item{XM}{Is an incidence matrix relating the full set of mixing coefficients
+to the reduced set of mixing coefficients (corresponding to steps or
+blocks).}
+
+\item{HBDclass}{By default, this value is set to "SingleRate". This means that
+the layer is defined by a single rate (like an average or global rate for
+that layer). With the option "Interval", one rate is first defined for every
+past generation. If we assume discrete past generations (1, 2, 3, 4, 5,
+...), the corresponding rates would approximately be equal to 2, 4, 6, ...
+We insist that this is a crude approximation. However, it allows easier
+interpretation of the results, for instance by understanding better how many
+generations are approximately captured per layer. One layer corresponds then
+to multiple "generations" and is defined as an interval going from
+generations g1 to g2. In this approach, we use only discrete generations and
+start at generation 1. The values in the krates vector correspond then to
+the last generation in each layer. For example, setting krates to
+(10,20,50,100) would define four layers from generations 1 to 10, 11 to 20,
+21 to 50 and 51 to 100. To obtain the corresponding rates, these values are
+multiplied by two (inside the function). The rates used by ZooRoH would then go
+from 2 to 20, 22 to 40, 42 to 100 and 102 to 200.}
 }
 \value{
 The function return an object that defines a model for RZooRoH and
- incuding the following elements: zmodel@typeModel equal to "kr", "mixkr" or
- "mixkl" according to the selected model, zmodel@mix_coef an array with
- mixing coefficients, zmodel@krates an array with the rates of the HBD and
- non-HBD classes, zmodel@err the parameter defining the probability to
- observe an heterozygous genotype in an HBD class, and zmodel@seqerr the
- parameter defining the probability of sequencing error per read.
+ including the following elements: zmodel@typeModel equal to "kl", "mixkl" or
+ "step_mixkl" according to the selected model, zmodel@mix_coef an array with
+ mixing coefficients, zmodel@krates an array with the rates of the HBD
+ classes, zmodel@err the parameter defining the probability to observe an
+ heterozygous genotype in an HBD class, and zmodel@seqerr the parameter
+ defining the probability of sequencing error per read, zmodel@XM the
+ incidence matrix relating individual layers to blocks or steps,
+ zmodel@typeClass indicating the type of HBD classes,
 }
 \description{
 Help the user to create a model for RZooRoH, including default parameters. The
@@ -112,29 +148,24 @@ output is a zmodel object necessary to run RZooRoH.
 }
 \examples{
 
-# To define a the default model, with 10 classes (9 HBD and 1 non-HBD class)
+# To define a the default model, with 10 layers (10 HBD and 1 non-HBD class)
 # and with pre-defined rates for HBD classes with a base of 2 (2, 4, 8, ...):
 
-mix10R <- zoomodel()
+Mix10L <- zoomodel()
 
 # To see the parameters of the defined model, just type:
 
-mix10R
+Mix10L
 
-# To define a model with pre-defined rates for 5 classes (4 HBD and 1 non-HBD
-# class) and using a base of 10 to define rates (10, 100, 1000, ...):
+# To define a model with four layers and using a base of 10 to define
+# rates (10, 100, 1000, ...):
 
-mix5R <- zoomodel(K=5,base=10)
+Mix4L <- zoomodel(K=4,base=10)
 
 # To define a model with two classes, with estimation of rates for HBD classes
 # and starting with a rate 10:
 
-my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
-
-# To define a model with four classes, with estimation of rates for HBD classes
-# and choosing four initial rates:
-
-my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256))
+my.mod1R <- zoomodel(predefined=FALSE,K=1,krates=c(10))
 
 
 }

@@ -8,15 +8,21 @@ zoorun(
   zoomodel,
   zooin,
   ids = NULL,
-  method = "opti",
+  parameters = TRUE,
   fb = TRUE,
   vit = TRUE,
-  minr = 0,
-  maxr = 1e+08,
-  maxiter = 1000,
-  convem = 1e-10,
   localhbd = FALSE,
-  nT = 1
+  nT = 1,
+  optim_method = "L-BFGS-B",
+  maxiter = 100,
+  minmix = 1,
+  maxr = 1e+08,
+  ibd = FALSE,
+  ibdpairs = NULL,
+  haploid = FALSE,
+  RecTable = FALSE,
+  trim_ad = FALSE,
+  hemiprob = 0
 )
 }
 \arguments{
@@ -34,13 +40,11 @@ data file) that must be proceeded. It can also be a vector containing the
 list of numbers that must be proceeded. By default, the model runs for all
 individuals.}
 
-\item{method}{Specifies whether the parameters are estimated by optimization
-with the L-BFGS-B method from the optim function (option method="opti",
-default value) or with the EM-algorithm (option method="estem"). When the EM
-algorithm is used, the Forward-Backward algorithm is run automatically (no
-need to select the fb option - see below). We recommend to set minr to 1
-when using the EM algorithm. If the user doesn't want to estimate the
-parameters he must set method="no".}
+\item{parameters}{Specifies whether the parameters are estimated by
+optimization with the L-BFGS-B method from the optim function (optional
+argument - true by default). If the user doesn't want to estimate the
+parameters he must set parameters=FALSE. In that case, the forward-backaward
+and Viterbi algorithms are run with the provided parameters.}
 
 \item{fb}{A logical indicating whether the forward-backward algorithm is run
 (optional argument - true by default). The Forward-Backward algorithm
@@ -52,7 +56,7 @@ position, the option localhbd must be set to true (this generates larger
 outputs).}
 
 \item{vit}{A logical indicating whether the Viterbi algorithm is run (optional
-argument - true by default). The Viterbi algorithm performs the decoding
+argument - false by default). The Viterbi algorithm performs the decoding
 (determining the underlying class at every marker position). Whereas the
 Forward-Backward algorithms provide HBD probabilities (and how confident a
 region can be declared HBD), the Viterbi algorithm assigns every marker
@@ -63,42 +67,92 @@ to identify HBD segments. To estimate realized inbreeding and determine HBD
 status of a position, we recommend to use the Forward-Backward algorithm
 that better reflects uncertainty.}
 
-\item{minr}{With optim and the reparametrized model (default), this indicates
-the minimum difference between rates of successive classes. With the EM
-algorithm, it indicates the minimum rate for a class. It is an optional
-argument set to 0. Adding such constraints might slow down the speed of
-convergence with optim and we recommend to run first optim without these
-constraints. With the EM algorithm, we recommend to use a value of 1.}
-
-\item{maxr}{With optim and the reparametrized model (default), this indicates
-the maximum difference between rates of successive classes. With the EM
-algorithm, it indicates the maximum rate for a class. It is an optional
-argument set to an arbitrarily large value (100000000). Adding such
-constraints might slow down the speed of convergence with optim and we
-recommend to run first optim without these constraints.}
-
-\item{maxiter}{Indicates the maximum number of iterations with the EM
-algorithm (optional argument - 1000 by default).}
-
-\item{convem}{Indicates the convergence criteria for the EM algorithm
-(optional argument / 1e-10 by default).}
-
 \item{localhbd}{A logical indicating whether the HBD probabilities for each
-individual at each marker are returned when using the EM or the
-Forward-Backward algorithm (fb option). This is an optional
-argument that is false by default.}
+individual at each marker are returned when using the Forward-Backward
+algorithm (fb option). This is an optional argument that is false by
+default.}
 
 \item{nT}{Indicates the number of threads used when running RZooRoH in
 parallel (optional argument - one thread by default).}
+
+\item{optim_method}{Indicates which method the optim R function will use to
+estimate the parameters of the model ("L-BFGS-B" by default). The possible
+methods are "Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN" and "Brent".
+Type "? optim" to have more information. In our experience, the "L-BFGS-B"
+method works well but the method achieving the best likelihood is variable
+(according to the data sets, the model, the priors, the constraints). The
+same goes for the efficiency (speed). When the zoorun does not converge, you
+can test with another method. Note that the only method allowing to put
+constraints on parameters is "L-BFGS-B" (other methods are unconstrained).}
+
+\item{maxiter}{Indicates the maximum number of iterations when estimating the
+parameters with the R optim function (optional argument - 100 by default).
+Iterations are not defined identically across methods. For instance, in one
+iteration of the "L-BFGS-B" method, the likelihood of the model, estimated
+with the forward algorithm, is evaluated multiple times. So, a value of 100
+iterations is good for the "L-BFGS-B" method but larger values are required
+for some other algorithms.}
+
+\item{minmix}{This indicates the minimal value for the mixing coefficients. By
+default it is set to 0 with the classical mixkl and kl models
+(unconstrained). However, when using the step option or the "Interval"
+HBDclass, the values is set to 1e-16 to avoid numerical problems. Note that
+constraints are only allowed with the "L-BFGS-B" method from optim.}
+
+\item{maxr}{This indicates the maximum difference between rates of successive
+classes. It is an optional argument set to an arbitrarily large value
+(100000000). Adding such constraints might slow down the speed of
+convergence and we recommend to run first without this constraint
+(constraints are only allowed with the "L-BFGS-B" method from optim).}
+
+\item{ibd}{A logical indicating whether the function will be used to compute
+IBD between pairs of phased haplotypes instead of HBD within individuals. In
+that case, the user must provide a matrix with the pairs of haplotypes that
+will be analyzed. This option can only be used if phased data are provided
+as input with the zformat set to "vcf" or "haps". This is an optional
+parameter set to false by default.}
+
+\item{ibdpairs}{A matrix with four columns, indicating the pair of haplotypes
+being analyzed in an IBD analysis. Haplotypes are indicated by two columns,
+one column for the id of the individuals and a second column for the
+haplotype number within individual (1 or 2). The first and third columns
+indicate the id of the individuals carrying the first and second haplotype,
+respectively. The second and four columns indicates the haplotype numbers
+within the first and second individuals, respectively. With haploid data,
+the matrix must have only two columns indicating the number of the first and
+second haplotypes from the pairs. This is an optional parameter, the matrix
+must be provided only when the ibd option is true.}
+
+\item{haploid}{This is an optional parameter indicating whether haplotypes
+belong to an haploid organisms or chromosome (false by default). It can be
+used only in combination with the 'ibd' option and requires phased data as
+input with the zformat set to "haps". When haploid is true, then the
+ibdpairs matrix has only two columns indicating simply the haplotype
+numbers. When haploid is true the number of haplotypes can be uneven while
+even numbers are required when haploid is set to false.}
+
+\item{RecTable}{This is an optional parameter indicating whether a finite
+number of genetic distances are used (false by default). This function can
+be used only with the "Interval" HBDclass. The "Interval" option can be
+slow, in particular if large "intervals" of generations are defined. To
+speed up computations, some variables are precomputed for a finite set of
+genetic distances, select to cover a broad range of possible values. The
+real genetic distance between two genetic markers is then replaced by the
+closest value in the table (the difference between the true and used genetic
+distances being also lower than 10"\%").}
+
+\item{trim_ad}{This is an option still under evaluation (for testing only)}
+
+\item{hemiprob}{This is an option still under evaluation (for testing only)}
 }
 \value{
-The function return a zoores object with several slots accesses by
-the "@" symbol. The three main results are zoores@realized (the matrix with
-partitioning of the genome in different HBD classes for each individual),
-zoores@hbdseg (a data frame with identified HBD segments) and zoores@hbdp
-(a list of matrices with HBD probabilities per SNP and per class).
+The function return a zoores object with several slots accesses by the
+ "@" symbol. The three main results are zoores@realized (the matrix with
+ partitioning of the genome in different HBD classes for each individual),
+ zoores@hbdseg (a data frame with identified HBD segments) and zoores@hbdp
+ (a list of matrices with HBD probabilities per SNP and per class).
 
-Here is a list with all the slots and their description:
+ Here is a list with all the slots and their description:
 
 \enumerate{
 \item zoores@nind the number of individuals in the analysis,
@@ -109,7 +163,7 @@ individuals,
  \item zoores@krates the (estimated) rates for the exponential distributions
  associated with each HBD or non-HBD class for all individuals,
  \item zoores@niter the number of iterations for estimating the
- parameters (per individual),
+ parameters - the number of calls of the forward algorithm (per individual),
  \item zoores@modlik a vector containing the likelihood of the model for
   each individual,
  \item zoores@modbic a vector containing the value of the BIC for each
@@ -127,16 +181,24 @@ individuals,
  individual number, the chromosome number, the first and last SNP of the
  segment, the positions of the first and last SNP of the segment, the number
  of SNPs in the segment, the length of the segment, the HBD state of the
- segment),
- \item zoores@optimerr a vector indicating whether optim ran with or
- without error (0/1),
+ segment). In case of IBD, the first column indicates the number of the pair
+ of haplotypes,
+ \item zoores@optimerr a vector indicating whether optim ran with or without
+ error (0 indicates successful completion / 1 indicates that the iteration
+ limit has been reached / 51 and 52 indicate warnings from the "L-BFGS-B" method
+ / 99 indicates numerical problem). See the optim R function for more
+ details.
  \item zoores@sampleids is a vector with the names of the
- samples (when provided in the zooin object through the zoodata function).}
+ samples (when provided in the zooin object through the zoodata function).
+ When an IBD analysis is run, it indicates the pairs of haplotypes separated
+ by "_". For diploid individuals, it combines individual ID, haplotype ID (1
+ or 2) for the two individuals.}
 }
 \description{
 Apply the defined model on a group of individuals: parameter estimation,
 computation of realized autozygosity and homozygous-by-descent probabilities,
-and identification of HBD segments (decoding).
+and identification of HBD segments (decoding). It is also possible to apply
+the model to a pair of phased haplotypes with the 'ibd' option.
 }
 \examples{
 
@@ -146,16 +208,16 @@ typfile <- (system.file("exdata","typs.txt",package="RZooRoH"))
 frq <- read.table(freqfile,header=FALSE)
 typ <- zoodata(typfile,supcol=4,chrcol=1,poscol=2,allelefreq=frq$V1)
 # Define a model with two HBD classes with rates equal to 10 and 100.
-Mod3R <- zoomodel(K=3,base_rate=10)
+Mod2L <- zoomodel(K=2,base_rate=10)
 # Run the model on all individuals.
-typ.res <- zoorun(Mod3R, typ)
+typ.res <- zoorun(Mod2L, typ)
 # Observe some results: likelihood, realized autozygosity in different
 # HBD classes and identified HBD segments.
 typ.res@modlik
 typ.res@realized
 typ.res@hbdseg
 # Define a model with one HBD and one non-HBD class and run it.
-Mod1R <- zoomodel(K=2,predefined=FALSE)
+Mod1R <- zoomodel(K=1,predefined=FALSE)
 typ2.res <- zoorun(Mod1R, typ)
 # Print the estimated rates and mixing coefficients.
 typ2.res@krates
@@ -165,7 +227,7 @@ myfile <- (system.file("exdata","genoex.txt",package="RZooRoH"))
 ex2 <- zoodata(myfile)
 # Run RZooRoH to estimate parameters on your data with the 1 HBD and 1 non-HBD
 # class (parameter estimation with optim).
-my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
+my.mod1R <- zoomodel(predefined=FALSE,K=1,krates=c(10))
 \donttest{my.res <- zoorun(my.mod1R, ex2, fb = FALSE, vit = FALSE)}
 # The estimated rates and mixing coefficients:
 \donttest{my.res@mixc}
@@ -175,19 +237,19 @@ my.mod1R <- zoomodel(predefined=FALSE,K=2,krates=c(10,10))
 \donttest{my.res2 <- zoorun(my.mod1R, ex2)}
 # The table with estimated realized autozygosity:
 \donttest{my.res2@realized}
-# Run a model with 4 classes (3 HBD classes) and estimate the rates of HBD
-# classes with one thread:
-my.mod4R <- zoomodel(predefined=FALSE,K=4,krates=c(16,64,256,256))
-\donttest{my.res3 <- zoorun(my.mod4R, ex2, fb = FALSE, vit = FALSE, nT =1)}
-# The estimated rates for the 4 classes and the 20 individuals:
+# Run a model with 3 layers (3 HBD classes / 1 non-HBD class) and estimate
+# the rates of HBD classes with one thread:
+my.mod3L <- zoomodel(predefined=FALSE,K=3,krates=c(16,64,256))
+\donttest{my.res3 <- zoorun(my.mod3L, ex2, fb = FALSE, vit = FALSE, nT =1)}
+# The estimated rates for the 3 classes and the 20 individuals:
 \donttest{my.res3@krates}
-# Run a model with 5 classes (4 HBD classes) and predefined rates.
+# Run a model with 4 layers and predefined rates.
 # The model is run only for a subset of four selected individuals.
-# The parameters are estimated with the EM-algorithm, the Forward-Backward
-# alogrithm is ued to estimate realized autozygosity and the Viterbi algorithm to
-# identify HBD segments. One thread is used.
-mix5R <- zoomodel(K=5,base=10)
-\donttest{my.res4 <- zoorun(mix5R,ex2,ids=c(7,12,16,18), method = "estem", nT = 1)}
+# The parameters are estimated, the Forward-Backward alogrithm is ued to
+# estimate realized autozygosity and the Viterbi algorithm to identify
+# HBD segments. One thread is used.
+mix4L <- zoomodel(K=4,base=10)
+\donttest{my.res4 <- zoorun(mix4L,ex2,ids=c(7,12,16,18), nT = 1)}
 # The table with all identified HBD segments:
 \donttest{my.res4@hbdseg}
 

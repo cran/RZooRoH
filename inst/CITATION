@@ -1,46 +1,44 @@
-
 citHeader("To cite package 'RZooRoH' in publications, please use:")
 
-bibentry(
-         bibtype="Article",
-         title = "A model-based approach to characterize individual inbreeding at both global and local genomic scales.",
-         author = c(as.person("Tom Druet"),as.person("Mathieu Gautier")),
+
+bibentry(bibtype="Article",
+         author = 	 c(
+         	person("Tom","Druet",role="aut"),
+         	person("Mathieu","Gautier",role="aut")
+         ),
+         title = 	 "A model-based approach to characterize individual inbreeding at both global and local genomic scales.",
          journal = 	 "Molecular Ecology",
-         year = 	 "2017",
-         volume =	 "26",
-         number =	 "20",
+         year = 	 2017,
+         volume =	 26,
+         number =	 20,
          pages="5820-5841",
-         url       = "https://doi.org/10.1111/mec.14324",
-         doi          =  "10.1111/mec.14324",
-         textVersion =paste("T. Druet and M. Gautier (2017). A model-based approach to characterize individual inbreeding at both global and local genomic scales. Molecular Ecology, 26:5820-5841"))
+         textVersion ="T. Druet and M. Gautier (2017). A model-based approach to characterize individual inbreeding at both global and local genomic scales. Molecular Ecology, 26:5820-5841" )
 
-bibentry(
-         bibtype="Article",
-         title = "RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments.",
-         author = c(as.person("Amandine R Bertrand"),as.person("Naveen K Kadri"),as.person("Laurence Flori"),as.person("Mathieu Gautier"),as.person("Tom Druet")),
-         journal = 	  "Methods in Ecology and Evolution",
-         year = 	 "2019",
-         volume =	 "10",
-         number =	 "6",
-         pages="860-866",
-         url       = "https://doi.org/10.1111/2041-210X.13167",
-         doi          =  "10.1111/2041-210X.13167",
-         textVersion =paste("A.R. Bertrand, N.K. Kadri, L. Flori, M. Gautier and T. Druet (2019). RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments. Methods in Ecology and Evolution" ))
+bibentry(bibtype="Article",
+         author = 	 c(
+         	person("Amandine","Bertrand",role="aut"),
+         	person("Naveen","Kadri",role="aut"),
+         	person("Laurence","Flori",role="aut"),
+         	person("Mathieu","Gautier",role="aut"),
+         	person("Tom","Druet",role="aut")
+         ),
+         title = 	 "RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments.",
+         journal = 	 "Methods in Ecology and Evolution",
+         year = 	 2019,
+         textVersion ="A.R. Bertrand, N.K. Kadri, L. Flori, M. Gautier and T. Druet (2019). RZooRoH: an R package to characterize individual genomic autozygosity and identify homozygous-by-descent segments. Methods in Ecology and Evolution" )
 
-bibentry(
-         bibtype="Article",
-         title = "A hidden Markov model to estimate homozygous-by-descent probabilities associated with nested layers of ancestors.",
-         author = c(as.person("Tom Druet"),as.person("Mathieu Gautier")),,
-         journal = 	  "Theoretical Population Biology",
-         year = 	 "2022",
-         volume =	 "145",
-         number =	 "",
+
+bibentry(bibtype="Article",
+         author = 	 c(
+         	person("Tom","Druet",role="aut"),
+         	person("Mathieu","Gautier",role="aut")
+         ),
+         title = 	 "A hidden Markov model to estimate homozygous-by-descent probabilities associated with nested layers of ancestors.",
+         journal = 	 "Theoretical Population Biology",
+         year = 	 2022,
+         volume =	 145,
          pages="38-51",
-         url       = "https://doi.org/10.1016/j.tpb.2022.03.001",
-         doi          =  "10.1016/j.tpb.2022.03.001",
-         textVersion =paste("T. Druet and M. Gautier (2022). A hidden Markov model to estimate homozygous-by-descent probabilities associated with nested layers of ancestors. Theoretical Population Biology, 145:38-51"))
-
-
+         textVersion ="T. Druet and M. Gautier (2022). A hidden Markov model to estimate homozygous-by-descent probabilities associated with nested layers of ancestors. Theor Popul Biol, 145:38-51" )
 
 
 

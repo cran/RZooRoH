@@ -166,26 +166,64 @@
 
 #' The result of an analysis on 110 sheeps from the Soay population.
 #'
-#' The results were obtained by running the default model (10 classes
+#' The results were obtained by running the default model (10 layers
 #'  with pre-defined rates) on 110 individuals genotyped at 37465 SNPs.
 #'
 #' @format the results are a zres object.
-"soay_mix10r"
+"soay_mix10l"
 
 #' The result of an analysis on 22 sheeps from Rasa Aragonesa population.
 #'
-#' The results were obtained by running the default model (10 classes
+#' The results were obtained by running the default model (10 layers
 #'  with pre-defined rates) on 22 individuals genotyped at 37465 SNPs.
 #'
 #' @format the results are a zres object.
-"rara_mix10r"
+"rara_mix10l"
 
 #' The result of an analysis on 23 sheeps from Wiltshire population.
 #'
-#' The results were obtained by running the default model (10 classes
+#' The results were obtained by running the default model (10 layers
 #'  with pre-defined rates) on 23 individuals genotyped at 37465 SNPs.
 #'
 #' @format the results are a zres object.
-"wilt_mix10r"
+"wilt_mix10l"
 
+#' The result of a kinship analysis on 18 cattle from the Amsterdam Island.
+#'
+#' The results were obtained by running the a model with 4 layers and the kinship
+#' option among all pairs of individuals (genotyped at 23679 SNPs after filtering).
+#'
+#' @format the results are a zres object.
+"kintaf_mix4l"
+
+#' The result of local IBD probabilities for a pair of individuals among the 18
+#' cows from the Amsterdam Island.
+#'
+#' The results were obtained by running the a model with 4 layers and the predhbd
+#' function for all HBD classes. Results were extracted for chromosome 1.
+#'
+#' Results were extracted for chromosome 1 and the map is also provided (map1).
+#'
+#' @format the result is an array.
+"hbd1"
+
+#' The result of local IBD probabilities for a pair of individuals among the 18
+#' cows from the Amsterdam Island (recent only).
+#'
+#' The results were obtained by running the a model with 4 layers and the predhbd
+#' function for HBD classes with a rate < 10. Results were extracted for
+#' chromosome 1.
+#'
+#' @format the result is an array.
+"hbd2"
+
+#' The map for local IBD probabilities for a pair of individuals among the 18
+#' cows from the Amsterdam Island (recent only).
+#'
+#' The map corresponds to the results obtained by running the a model with 4
+#' layers and the predhbd function (see hbd1 and hbd2). Results were extracted for
+#' chromosome 1.
+#'
+#' @format the result is an array.
+"map1"
 

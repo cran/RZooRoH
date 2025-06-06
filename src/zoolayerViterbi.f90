@@ -1,19 +1,25 @@
-subroutine zoolayerViterbi(nclust,nchr,npos,pemission,chr_limits,as,Fs,posi,states)
+subroutine zoolayerViterbi(nclust,nchr,npos,pemission,chr_limits,zrates,zmix,posi,states)
 implicit none
 INTEGER, PARAMETER :: DP = SELECTED_REAL_KIND(14)
-integer ::i,j,l,k,nclust,nchr,npos,chr,fpos,lpos,hs,hs2,pos(1),phi(nclust,npos)
-integer ::isF(nclust),chr_limits(nchr,2),IT(nclust,nclust),posi(npos),states(npos)
+integer ::i,j,l,k,nclust,nclust2,nchr,npos,chr,fpos,lpos,hs,hs2,pos(1),phi(nclust,npos)
+integer ::isF(nclust),chr_limits(nchr,2),IT(nclust,nclust),posi(npos),states(npos),clim(nclust,3)
 real(dp) ::pemission(npos,2),as(nclust),Fs(nclust),delta(nclust,npos)
-real(dp) ::trans(nclust,nclust),pinit(nclust)
+real(dp) ::trans(nclust,nclust),pinit(nclust),zmix(nclust-1),zrates(nclust-1)
 real(dp) ::sumF(2),F,a,r,gr,loglik,pmax,val(nclust),mind,d
 real(dp), parameter ::Morgan=100000000.d0
-real(dp) ::ptok(nclust),pnhbd(nclust),pchange(nclust),MTOC(nclust,nclust)
+real(dp) ::ptok(nclust),pnhbd(nclust),pchange(nclust),MTOC((nclust-1),nclust)
+real(dp), allocatable ::Fs2(:),as2(:),MTOC2(:,:)
+real(dp), allocatable ::ptok2(:),pnhbd2(:)
 
 
+Fs(1:(nclust-1))=zmix;Fs(nclust)=1-zmix(nclust-1)
+as(1:(nclust-1))=zrates;as(nclust)=zrates(nclust-1)
 pinit=Fs
+
 !delta=-1000000000.0;phi=0;states=0
 phi=0;states=0
 isF=1;isF(nclust)=0
+
 !############ PREPARE PARAMETERS ###################
 !############ FOR TRANSITION PROB ##################
 
@@ -24,6 +30,7 @@ isF=1;isF(nclust)=0
 
 !#### prob to reach state k ########################
 !#### after change of ancestry at first level ######
+
 
 pnhbd=0.d0 !#### probability to reach the non-hbd class at level k
 pnhbd(1)=1.d0-Fs(1)
@@ -47,9 +54,10 @@ pinit=ptok
 !##### only reach states from level l or higher #######
 
 MTOC=0.d00
-do k=1,nclust
+do k=1,(nclust-1)
  MTOC(k,k:nclust)=ptok(k:nclust)/sum(ptok(k:nclust))
 enddo
+
 
 ! ########
 do chr=1,nchr
@@ -69,33 +77,7 @@ fpos=chr_limits(chr,1);lpos=chr_limits(chr,2)
 
 ! #### compute transition (normally function)
 
- !#### probability that ancestry is changing at level k
- !#### but not at upper level
-
-  pchange=0.d00
-  d=(posi(k)-posi(k-1))/Morgan
-  pchange(1)=1.d0-dexp(-as(1)*d)
-  do i=2,nclust-1
-   pchange(i)=exp(-as(i-1)*d)*(1.d0-exp(-(as(i)-as(i-1))*d))
-  enddo
-
- !###### now loop over layers (nclust-1) #######
- !###### multiply probability of coancestry change in level k
- !###### by conditional probability column(MTOC(,k)) #######
-
-  trans=0.d0
-  do l=1,(nclust-1)
-   do j=l,nclust
-    trans(j,:)=trans(j,:)+MTOC(l,:)*pchange(l)
-   enddo
-  enddo
-
- !###### end by adding diagonal elements #####
- !###### no coancestry change ########
-
-  do j=1,nclust
-   trans(j,j)=trans(j,j)+exp(-as(j)*d)
-  enddo
+trans=TM(nclust,as,MTOC,k,npos,posi)
 
  do i=1,nclust
   do j=1,nclust
@@ -124,46 +106,42 @@ enddo ! end chr
 
 contains
 
-function TM(K,IT,as,Fs,snp,nsnps,mpos)
+function TM(K,as,MTOC,snp,nsnps,mpos)
 implicit none
-integer ::K,hs,hs2,snp,nsnps,IT(K,K),mpos(nsnps)
-real(dp) ::a,r,as(K),Fs(K),TM(K,K),sumF(2)
+integer ::K,hs,hs2,snp,nsnps,mpos(nsnps)
+real(dp) ::a,r,as(K),Fs(K),TM(K,K),pchange(K),MTOC((K-1),K)
 real(dp), parameter ::Morgan=100000000.d0
 
+!#### probability that ancestry is changing at level k
+!#### but not at upper level
+
+pchange=0.d00
+d=(mpos(snp)-mpos(snp-1))/Morgan
+ pchange(1)=1.d0-dexp(-as(1)*d)
+ do i=2,K-1
+!  pchange(i)=exp(-as(i-1)*d)*(1.d0-exp(-(as(i)-as(i-1))*d))
+ pchange(i)=exp(-as(i-1)*d)-exp(-as(i)*d)
+enddo
+
+!###### now loop over layers (nclust-1) #######
+!###### multiply probability of coancestry change in level k
+!###### by conditional probability column(MTOC(,k)) #######
 
 TM=0.d0
-do hs=1,K
-  sumF(1)=dot_product(Fs,IT(hs,:))
-  a=as(hs)
-  r=dexp(-a*(mpos(snp)-mpos(snp-1))/Morgan)
-  do hs2=1,K
-   if(IT(hs,hs2)==0)cycle
-   TM(hs,hs2)=(1-r)*Fs(Hs2)/sumF(1)
-  enddo
-  TM(hs,hs)=TM(hs,hs)+r
+do l=1,(K-1)
+ do j=l,K
+  TM(j,:)=TM(j,:)+MTOC(l,:)*pchange(l)
+ enddo
+enddo
+
+!###### end by adding diagonal elements #####
+!###### no coancestry change ########
+
+do j=1,K
+  TM(j,j)=TM(j,j)+exp(-as(j)*d)
 enddo
 
 end function
-
-function pexit(K,IT,as,Fs,snp,nsnps,mpos)
-implicit none
-integer ::K,hs,hs2,snp,nsnps,IT(K,K),mpos(nsnps)
-real(dp) ::a,r,as(K),Fs(K),pexit(K,K),sumF(2)
-real(dp), parameter ::Morgan=100000000.d0
-
-pexit=0.d0
-do hs=1,K
-  sumF(1)=dot_product(Fs,IT(hs,:))
-  a=as(hs)
-  r=dexp(-a*(mpos(snp)-mpos(snp-1))/Morgan)
-  do hs2=1,K
-   if(IT(hs,hs2)==0)cycle
-   pexit(hs,hs2)=(1-r)*Fs(Hs2)/sumF(1)
-  enddo
-enddo
-
-end function
-
 
 end subroutine
 

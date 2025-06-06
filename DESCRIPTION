@@ -2,8 +2,12 @@ Package: RZooRoH
 Type: Package
 Title: Partitioning of Individual Autozygosity into Multiple
         Homozygous-by-Descent Classes
-Version: 0.3.2.1
-Author: Tom Druet, Naveen Kumar Kadri, Amandine Bertrand and Mathieu Gautier
+Version: 0.4.0
+Authors@R: c(
+           person("Tom",  "Druet", role = c("aut", "cre"), email = "tom.druet@uliege.be"),
+           person("Naveen Kumar", "Kadri", role = "aut"),
+           person("Amandine","Bertrand",role = "ctb"),
+           person("Mathieu","Gautier",role = "aut"))
 Maintainer: Tom Druet <tom.druet@uliege.be>
 Description: Functions to identify Homozygous-by-Descent (HBD) segments associated with runs of homozygosity (ROH) and to
     estimate individual autozygosity (or inbreeding coefficient). HBD segments and autozygosity are assigned to multiple HBD classes
@@ -12,17 +16,21 @@ Description: Functions to identify Homozygous-by-Descent (HBD) segments associat
     segments (longer segments and smaller rates for recent autozygosity / recent common ancestor). The functions allow to estimate the
     parameters of the model (rates of the exponential distributions, mixing proportions), to estimate global and local autozygosity
     probabilities and to identify HBD segments with the Viterbi decoding. The method is fully described in Druet and Gautier (2017)
-    <doi:10.1111/mec.14324>. 
-Depends: R (>= 3.2.0), methods
+    <doi:10.1111/mec.14324> and Druet and Gautier (2022) <doi:10.1016/j.tpb.2022.03.001>. 
+Depends: R (>= 3.5.0), methods
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: foreach, doParallel, parallel, data.table, RColorBrewer,
         iterators
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2023-10-27 08:12:08 UTC; druet
+Packaged: 2025-06-05 19:48:41 UTC; tdruet
+Author: Tom Druet [aut, cre],
+  Naveen Kumar Kadri [aut],
+  Amandine Bertrand [ctb],
+  Mathieu Gautier [aut]
 Repository: CRAN
-Date/Publication: 2023-10-27 08:40:02 UTC
+Date/Publication: 2025-06-06 05:20:02 UTC

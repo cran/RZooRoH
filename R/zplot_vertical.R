@@ -84,7 +84,7 @@ zooplot_partitioning <- function (input, cols=NULL, plotids=TRUE, toplot=NULL,
 
   for (i in  1:length (input)) {
     myres <- input [[i]]@realized
-    ks[i] <- ncol(input[[i]]@krates)
+    ks[i] <- ncol(input[[i]]@krates) + 1
 
     if (randomids ==FALSE ) {
       if (!is.null (nrandom)) {

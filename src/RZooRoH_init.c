@@ -7,26 +7,32 @@
 */
 
 /* .Fortran calls */
-extern void F77_NAME(zooem)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void F77_NAME(zoolayerem)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void F77_NAME(zoofb)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void F77_NAME(zoolayerfb)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void F77_NAME(zoolik)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(zoolayerfb)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(zoolayerlik)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void F77_NAME(zooviterbi)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(zoosumlayerlik)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(zoosumlayerlik2)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(zoosumlayerfb)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void*);
+extern void F77_NAME(zoosumlayerfb2)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void*);
 extern void F77_NAME(zoolayerviterbi)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void F77_NAME(zoosim)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void*, void*);
+extern void F77_NAME(zoosumlayerviterbi)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(zoosumlayerviterbi2)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(freqem1)(void *, void *, void *);
+extern void F77_NAME(freqem2)(void *, void *, void *);
+extern void F77_NAME(freqem3)(void *, void *, void *);
 
 static const R_FortranMethodDef FortranEntries[] = {
-    {"zooem",      (DL_FUNC) &F77_NAME(zooem),      17},
-    {"zoolayerem", (DL_FUNC) &F77_NAME(zoolayerem),      17},
-    {"zoofb",      (DL_FUNC) &F77_NAME(zoofb),      10},
     {"zoolayerfb", (DL_FUNC) &F77_NAME(zoolayerfb),      10},
-    {"zoolik",     (DL_FUNC) &F77_NAME(zoolik),      9},
     {"zoolayerlik",(DL_FUNC) &F77_NAME(zoolayerlik),      9},
-    {"zooviterbi", (DL_FUNC) &F77_NAME(zooviterbi),  9},
+    {"zoosumlayerlik",(DL_FUNC) &F77_NAME(zoosumlayerlik),      9},
+    {"zoosumlayerlik2",(DL_FUNC) &F77_NAME(zoosumlayerlik2),      9},
+    {"zoosumlayerfb",(DL_FUNC) &F77_NAME(zoosumlayerfb),      10},
+    {"zoosumlayerfb2",(DL_FUNC) &F77_NAME(zoosumlayerfb2),      10},
     {"zoolayerviterbi", (DL_FUNC) &F77_NAME(zoolayerviterbi),  9},
-    {"zoosim",     (DL_FUNC) &F77_NAME(zoosim),     13},
+    {"zoosumlayerviterbi", (DL_FUNC) &F77_NAME(zoosumlayerviterbi),  9},
+    {"zoosumlayerviterbi2", (DL_FUNC) &F77_NAME(zoosumlayerviterbi2),  9},
+    {"freqem1",     (DL_FUNC) &F77_NAME(freqem1),     3},
+    {"freqem2",     (DL_FUNC) &F77_NAME(freqem2),     3},
+    {"freqem3",     (DL_FUNC) &F77_NAME(freqem3),     3},
     {NULL, NULL, 0}
 };
 
