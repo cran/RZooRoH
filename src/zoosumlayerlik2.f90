@@ -1,12 +1,12 @@
 subroutine zoosumlayerlik2(nclust,nchr,npos,pemission,chr_limits,zrates,zmix,posi,loglik)
 implicit none
 INTEGER, PARAMETER :: DP = SELECTED_REAL_KIND(14)
-integer ::i,j,l,k,nclust,nchr,npos,chr,fpos,lpos,hs,hs2
-integer ::nG,g1,g2,g3,t,tr,t0,recfun,nd,d,d_i,lev1,lev2,fval,lval,lstep
+integer ::i,l,k,nclust,nchr,npos,chr,fpos,lpos
+integer ::nG,g1,g2,g3,recfun,nd,d,d_i,lev1,lev2,fval,lval,lstep
 integer ::isF(nclust),chr_limits(nchr,2),posi(npos)
 real(dp) ::pemission(npos,2),as(nclust),Fs(nclust),zmix(nclust-1),zrates(nclust-1)
 real(dp) ::alpha(nclust,npos),scaling(npos),pinit(nclust)
-real(dp) ::sumF(2),F,a,r,gr,loglik,d2,cst,cst2,prec
+real(dp) ::loglik,d2,cst,prec
 real(dp), parameter ::Morgan=100000000.d0
 real(dp),allocatable ::ptok(:),pnhbd(:),pnorec(:),ctok(:)
 real(dp),allocatable ::ctok2(:),precing(:),cumupk(:),upcoal(:),upnocoal(:)
@@ -45,7 +45,7 @@ as(1:(nclust-1))=zrates;as(nclust)=zrates(nclust-1)
 
 !where(Fs<0.00001)Fs=0.00001
 
-nG=as(nclust-1)
+nG=nint(as(nclust-1))
 allocate(ptok(nG),pnhbd(nG),ctok(nG),ctok2(nG),pnorec(0:nG))
 allocate(precing(nG),cumupk(nG),upcoal(nG),upnocoal(nG))
 allocate(P1(nclust),P2(nclust),P3(nclust,nd),P4(nclust,nd),P5(nclust,nd))

@@ -1,14 +1,13 @@
 subroutine zoosumlayerViterbi2(nclust,nchr,npos,pemission,chr_limits,zrates,zmix,posi,states)
 implicit none
 INTEGER, PARAMETER :: DP = SELECTED_REAL_KIND(14)
-integer ::i,j,l,k,nclust,nchr,npos,chr,fpos,lpos,hs,hs2,pos(1),phi(nclust,npos)
-integer ::isF(nclust),chr_limits(nchr,2),IT(nclust,nclust),posi(npos),states(npos)
-integer ::l2,l3,nG,g1,g2,g3,t,tr,t0,recfun,d,d_i,lev1,lev2,fval,lval,lstep,nd
+integer ::i,j,l,k,nclust,nchr,npos,chr,fpos,lpos,pos(1),phi(nclust,npos)
+integer ::isF(nclust),chr_limits(nchr,2),posi(npos),states(npos)
+integer ::l2,l3,nG,g1,g2,g3,recfun,d,d_i,lev1,lev2,fval,lval,lstep,nd
 real(dp) ::pemission(npos,2),as(nclust),Fs(nclust),delta(nclust,npos)
-real(dp) ::trans(nclust,nclust),pinit(nclust),zmix(nclust-1),zrates(nclust-1)
-real(dp) ::sumF(2),F,a,r,gr,loglik,pmax,val(nclust),cst,prec,mind,d2
+real(dp) ::pinit(nclust),zmix(nclust-1),zrates(nclust-1)
+real(dp) ::pmax,val(nclust),cst,prec,d2
 real(dp), parameter ::Morgan=100000000.d0
-real(dp) ::pchange(nclust),MTOC((nclust-1),nclust)
 real(dp),allocatable ::ptok(:),pnhbd(:),pnorec(:),ctok(:),MTRANS(:,:,:)
 real(dp),allocatable ::ctok2(:),precing(:),cumupk(:),upcoal(:),upnocoal(:)
 real(dp), allocatable ::P1(:),P2(:),P3(:,:),P4(:,:),P5(:,:),P6(:,:),P7(:,:)
@@ -43,7 +42,7 @@ as(1:(nclust-1))=zrates;as(nclust)=zrates(nclust-1)
 phi=0;states=0
 isF=1;isF(nclust)=0
 
-nG=as(nclust-1)
+nG=nint(as(nclust-1))
 allocate(ptok(nG),pnhbd(nG),ctok(nG),ctok2(nG),pnorec(0:nG))
 allocate(precing(nG),cumupk(nG),upcoal(nG),upnocoal(nG))
 allocate(P1(nclust),P2(nclust),P3(nclust,nd),P4(nclust,nd),P5(nclust,nd))

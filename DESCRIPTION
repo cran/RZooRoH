@@ -2,7 +2,7 @@ Package: RZooRoH
 Type: Package
 Title: Partitioning of Individual Autozygosity into Multiple
         Homozygous-by-Descent Classes
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
            person("Tom",  "Druet", role = c("aut", "cre"), email = "tom.druet@uliege.be"),
            person("Naveen Kumar", "Kadri", role = "aut"),
@@ -27,10 +27,10 @@ RoxygenNote: 7.3.2
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2025-06-05 19:48:41 UTC; tdruet
+Packaged: 2025-06-08 06:21:36 UTC; tdruet
 Author: Tom Druet [aut, cre],
   Naveen Kumar Kadri [aut],
   Amandine Bertrand [ctb],
   Mathieu Gautier [aut]
 Repository: CRAN
-Date/Publication: 2025-06-06 05:20:02 UTC
+Date/Publication: 2025-06-08 11:00:01 UTC

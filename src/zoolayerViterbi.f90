@@ -1,16 +1,13 @@
 subroutine zoolayerViterbi(nclust,nchr,npos,pemission,chr_limits,zrates,zmix,posi,states)
 implicit none
 INTEGER, PARAMETER :: DP = SELECTED_REAL_KIND(14)
-integer ::i,j,l,k,nclust,nclust2,nchr,npos,chr,fpos,lpos,hs,hs2,pos(1),phi(nclust,npos)
-integer ::isF(nclust),chr_limits(nchr,2),IT(nclust,nclust),posi(npos),states(npos),clim(nclust,3)
+integer ::i,j,l,k,nclust,nchr,npos,chr,fpos,lpos,pos(1),phi(nclust,npos)
+integer ::isF(nclust),chr_limits(nchr,2),posi(npos),states(npos)
 real(dp) ::pemission(npos,2),as(nclust),Fs(nclust),delta(nclust,npos)
 real(dp) ::trans(nclust,nclust),pinit(nclust),zmix(nclust-1),zrates(nclust-1)
-real(dp) ::sumF(2),F,a,r,gr,loglik,pmax,val(nclust),mind,d
+real(dp) ::pmax,val(nclust),d
 real(dp), parameter ::Morgan=100000000.d0
-real(dp) ::ptok(nclust),pnhbd(nclust),pchange(nclust),MTOC((nclust-1),nclust)
-real(dp), allocatable ::Fs2(:),as2(:),MTOC2(:,:)
-real(dp), allocatable ::ptok2(:),pnhbd2(:)
-
+real(dp) ::ptok(nclust),pnhbd(nclust),MTOC((nclust-1),nclust)
 
 Fs(1:(nclust-1))=zmix;Fs(nclust)=1-zmix(nclust-1)
 as(1:(nclust-1))=zrates;as(nclust)=zrates(nclust-1)
@@ -108,8 +105,8 @@ contains
 
 function TM(K,as,MTOC,snp,nsnps,mpos)
 implicit none
-integer ::K,hs,hs2,snp,nsnps,mpos(nsnps)
-real(dp) ::a,r,as(K),Fs(K),TM(K,K),pchange(K),MTOC((K-1),K)
+integer ::K,snp,nsnps,mpos(nsnps)
+real(dp) ::as(K),TM(K,K),pchange(K),MTOC((K-1),K)
 real(dp), parameter ::Morgan=100000000.d0
 
 !#### probability that ancestry is changing at level k

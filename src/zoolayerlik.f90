@@ -1,16 +1,14 @@
 subroutine zoolayerlik(nclust,nchr,npos,pemission,chr_limits,zrates,zmix,posi,loglik)
 implicit none
 INTEGER, PARAMETER :: DP = SELECTED_REAL_KIND(14)
-integer ::i,j,l,k,nclust,nclust2,nchr,npos,chr,fpos,lpos,hs,hs2
-integer ::isF(nclust),chr_limits(nchr,2),posi(npos),clim(nclust,3)
+integer ::i,l,k,nclust,nchr,npos,chr,fpos,lpos
+integer ::isF(nclust),chr_limits(nchr,2),posi(npos)
 real(dp) ::pemission(npos,2),as(nclust),Fs(nclust),zmix(nclust-1),zrates(nclust-1)
-real(dp) ::alpha(nclust,npos),scaling(npos),trans(nclust,nclust),pinit(nclust)
+real(dp) ::alpha(nclust,npos),scaling(npos),pinit(nclust)
 real(dp) ::alpha_up(nclust),alpha_float(0:nclust)
-real(dp) ::sumF(2),F,a,r,gr,loglik,d,cst
+real(dp) ::loglik,d,cst
 real(dp), parameter ::Morgan=100000000.d0
-real(dp) ::ptok(nclust),pnhbd(nclust),pnorec(0:(nclust-1)),MTOC((nclust-1),nclust)
-real(dp), allocatable ::Fs2(:),as2(:),MTOC2(:,:)
-real(dp), allocatable ::ptok2(:),pnhbd2(:)
+real(dp) ::ptok(nclust),pnhbd(nclust),pnorec(0:(nclust-1))
 
 Fs(1:(nclust-1))=zmix;Fs(nclust)=1-zmix(nclust-1)
 as(1:(nclust-1))=zrates;as(nclust)=zrates(nclust-1)

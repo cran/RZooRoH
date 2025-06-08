@@ -1,8 +1,8 @@
 subroutine freqem2(phredin,nind,freqest)
 implicit none
 integer, parameter :: dp = selected_real_kind(14)
-integer ::i,j,k,l,io,bp,nind
-real(dp) ::f1,f2,freqest
+integer ::i,nind
+real(dp) ::f1,freqest
 real(dp) ::phredin(3*nind)
 
 !### rescale phreds
@@ -18,7 +18,7 @@ contains
 !##### initial guess
 function freq0(myphreds,n)
 implicit none
-integer ::i,j,k,l
+integer ::i,k
 integer ::n
 real(dp) ::myphreds(3*n),freq0,gt,g11,g12,g22
 
@@ -41,8 +41,8 @@ end function
 
 function freqem(myphreds,f0,n)
 implicit none
-integer ::i,j,k,l,n,keep(n)
-real(dp) ::myphreds(3*n),eps,diff,f0,f1,freqem,gt
+integer ::i,k,l,n,keep(n)
+real(dp) ::myphreds(3*n),eps,diff,f0,freqem,gt
 real(dp) ::genolik(n,3),genofreq(3),genoprob(3)
 
 keep=0;eps=1e-4;diff=1.d0;freqem=f0

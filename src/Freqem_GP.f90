@@ -1,8 +1,8 @@
 subroutine freqem1(probin,nind,freqest)
 implicit none
-integer ::i,j,k,l,io,bp,nind
+integer ::nind
 integer, parameter :: dp = selected_real_kind(14)
-real(dp) ::f1,f2,freqest,probin(3*nind)
+real(dp) ::f1,freqest,probin(3*nind)
 
 f1=freq0(probin,nind)
 freqest=freqem(probin,f1,nind)
@@ -12,7 +12,7 @@ contains
 !##### initial guess
 function freq0(myprobs,n)
 implicit none
-integer ::i,j,k,l
+integer ::i,k
 integer ::n
 real(dp) ::myprobs(3*n),freq0,gt
 
@@ -30,8 +30,8 @@ end function
 
 function freqem(myprobs,f0,n)
 implicit none
-integer ::i,j,k,l,n,keep(n)
-real(dp) ::myprobs(3*n),eps,diff,f0,f1,freqem,gt
+integer ::i,k,l,n,keep(n)
+real(dp) ::myprobs(3*n),eps,diff,f0,freqem,gt
 real(dp) ::genolik(n,3),genofreq(3),genoprob(3)
 
 keep=0;eps=1e-4;diff=1.d0;freqem=f0

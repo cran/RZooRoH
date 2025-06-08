@@ -7,7 +7,7 @@
 */
 
 /* .Fortran calls */
-extern void F77_NAME(zoolayerfb)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(zoolayerfb)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(zoolayerlik)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(zoosumlayerlik)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(zoosumlayerlik2)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
